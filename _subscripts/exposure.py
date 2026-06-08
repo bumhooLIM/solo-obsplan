@@ -40,6 +40,7 @@ parser.add_argument("-t", "--time", type=float, required=True)
 parser.add_argument("-i", "--iter", type=int, default=1)
 parser.add_argument("-x", "--xbin", type=int, default=1)
 parser.add_argument("-y", "--ybin", type=int, default=1)
+parser.add_argument("-m", "--mode", type=str, default="light", choices=["light", "dark", "bias"], help="Frame type")
 parser.add_argument("--output_dir", type=str, default=str(directory.DATA_DIR), help="Directory to save FITS files")
 args = parser.parse_args()
 
@@ -70,7 +71,12 @@ try:
     output_path = Path(args.output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
-    obs_logger.info(f"Starting Sequence: {args.name} | {args.time}s x {args.iter}")
+    # Determine Mode Settings
+    is_light = True if args.mode.lower() == "light" else False
+    exptime = 0.01 if args.mode.lower() == "bias" else args.time
+    imagetyp = args.mode.capitalize() # "Light", "Dark", or "Bias"
+    
+    obs_logger.info(f"Starting Sequence: {args.name} | {exptime}s x {args.iter}")
 
     for i in range(args.iter):
         try:
@@ -90,10 +96,10 @@ try:
         
             # 3. Start Exposure
             start_time_iso = Time.now().iso
-            C.StartExposure(args.time, True)
+            C.StartExposure(exptime, is_light)
             
             # 4. Safely Poll with Timeout Buffer (Exposure time + 60s for download)
-            timeout = args.time + 60
+            timeout = exptime + 60
             start_wait = time.time()
             
             while not C.ImageReady:
@@ -135,7 +141,8 @@ try:
             
             # Observation Params
             hdr["OBJECT"] = args.name
-            hdr["EXPTIME"] = args.time
+            hdr["IMAGETYP"] = imagetyp
+            hdr["EXPTIME"] = exptime
             hdr["XBINNING"] = args.xbin
             hdr["YBINNING"] = args.ybin
             hdr["CCDTEMP"] = safe_get(C, "CCDTemperature")

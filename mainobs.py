@@ -69,7 +69,7 @@ def execute_yaml_plan(yaml_file):
                 obs_logger.error("[FATAL ERROR] Roof is closed or network is down. Aborting entire night.")
                 break
 
-        elif command == "startup":
+        elif command == "start_sequence":
             obs_logger.info("--> Executing pre-observation startup sequence...")
             subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "server.py"), "-s", "on"])
             sleep(5) # Give the server a moment to boot up before we check the roof status
@@ -77,8 +77,15 @@ def execute_yaml_plan(yaml_file):
             # subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "tracking.py"), "-t", "on"])
             temp = step.get('temp', -10.0) 
             subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "cooler.py"), "-s", "on", "-t", str(temp)])
-
-        elif command == "observe":
+            
+        elif command == "end_sequence":
+            obs_logger.info("--> Initiating after-observation shutdown sequence...")
+            # subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "tracking.py"), "-t", "off"])
+            # subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "parking.py"), "-p", "park"])
+            subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "cooler.py"), "-s", "off"])
+            subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "server.py"), "-s", "off"])
+            
+        elif command == "observe_rd":
             name = step.get('target_name', 'unknown_target')
             ra = str(step.get('ra'))
             dec = str(step.get('dec'))
@@ -98,7 +105,7 @@ def execute_yaml_plan(yaml_file):
                     obs_logger.warning(f"Target {name} is unsafe! (Alt: {current_alt:.1f}°, Az: {current_az:.1f}°).")
                     obs_logger.info("Instantly skipping to the next target field...")
                     continue
-
+                
                 obs_logger.info(f"    [SYSTEM] Target safely observable (Alt: {current_alt:.1f}°). Proceeding.")
                 
             except Exception as e:
@@ -122,16 +129,43 @@ def execute_yaml_plan(yaml_file):
                 obs_logger.warning(f"Slew failed for {name}. Instantly skipping to next target field...")
                 continue # Skip exposures if slew failed
 
-        elif command == "end":
-            obs_logger.info("--> Initiating safe shutdown sequence...")
+        elif command in ["dark", "bias"]:
+            name = command.capitalize() # Sets name to "Dark" or "Bias"
+            # Bias overrides exptime to 0.01; Dark pulls it from the YAML
+            exptime = float(step.get('exptime', 0.01)) if command == "dark" else 0.01
+            iterations = int(step.get('iter', 1))
+            xbin = int(step.get('xbin', 1))
+            ybin = int(step.get('ybin', 1))
+
+            obs_logger.info(f"--> Starting calibration frames: {name} ({iterations}x {exptime}s)")
+            
+            # Call exposure.py with the correct --mode flag
+            try:
+                subprocess.run([
+                    sys.executable, str(directory.SCRIPT_DIR / "exposure.py"),
+                    "-n", name, 
+                    "-t", f"{exptime:.2f}", 
+                    "-i", str(iterations), 
+                    "-x", str(xbin), 
+                    "-y", str(ybin),
+                    "-m", command, # Passes "dark" or "bias"
+                    "--output_dir", str(daily_output_dir)
+                ])
+                obs_completed += iterations
+            except Exception as e:
+                obs_logger.error(f"Failed to execute calibration frames: {e}")
+
+        elif command == "park":
+            obs_logger.info("--> Resetting telescope position to home...")
             subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "tracking.py"), "-t", "off"])
             subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "parking.py"), "-p", "park"])
-            subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "cooler.py"), "-s", "off"])
-            subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "server.py"), "-s", "off"])
+            home_proc = subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "homing.py"), "-c", "home"])
+            if home_proc.returncode != 0:
+                obs_logger.warning("Homing failed. Proceeding with caution...")
 
         elif command == "confirm_end":
             obs_logger.info(f"\n[SYSTEM] Shutdown Complete. Successful Observations: {obs_completed}")
-            break 
+            break
 
 if __name__ == "__main__":
     execute_yaml_plan("obsplan.yaml")
