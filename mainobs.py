@@ -52,6 +52,7 @@ def execute_yaml_plan(yaml_file):
             return
 
     obs_completed = 0 
+    skip_remaining_targets = False
 
     for step_num, step in enumerate(plan, 1):
         command = step.get('command', '').lower()
@@ -90,6 +91,12 @@ def execute_yaml_plan(yaml_file):
             
         elif command == "observe_rd":
             name = step.get('target_name', 'unknown_target')
+            
+            # --- Global Skip Check ---
+            if skip_remaining_targets:
+                obs_logger.info(f"Skipping {name} due to prior weather/dawn abort.")
+                continue
+            
             ra = str(step.get('ra'))
             dec = str(step.get('dec'))
             exptime = float(step.get('exptime', 1.0))
@@ -126,12 +133,28 @@ def execute_yaml_plan(yaml_file):
                 obs_logger.info(f"--> Starting exposures for {name}")
                 subprocess.run([
                     sys.executable, str(directory.SCRIPT_DIR / "exposure.py"),
-                    "-n", name, "-t", f"{exptime:.2f}", "-i", str(iterations), "-x", str(xbin), "-y", str(ybin), "--output_dir", str(daily_output_dir)
+                    "-n", name, 
+                    "-t", f"{exptime:.2f}", 
+                    "-i", str(iterations), 
+                    "-x", str(xbin), 
+                    "-y", str(ybin), 
+                    "--output_dir", str(daily_output_dir)
                 ])
                 obs_completed += 1
+            
+            elif slew_proc.returncode == 2:
+                obs_logger.error("[FATAL] Dawn detected by slew module. Skipping all remaining targets.")
+                skip_remaining_targets = True
+                continue
+                
+            elif slew_proc.returncode == 3:
+                obs_logger.error(f"[FATAL] Global weather timeout reached during {name}. Skipping all remaining targets.")
+                skip_remaining_targets = True
+                continue
+                
             else:
                 obs_logger.warning(f"Slew failed for {name}. Instantly skipping to next target field...")
-                continue # Skip exposures if slew failed
+                continue # Only skips this specific target if it was a standard mechanical error
 
         elif command in ["dark", "bias"]:
             name = command.capitalize() # Sets name to "Dark" or "Bias"
