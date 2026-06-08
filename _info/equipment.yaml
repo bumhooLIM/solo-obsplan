@@ -1,0 +1,27 @@
+telescope:
+  name: "RASA11"
+  focal_length: 620
+  diameter: 279.4
+  ip: "127.0.0.1"
+  port: 11111
+
+camera:
+  name: "Kepler_FLI4040"
+  pixel_size: 9.0
+  ip: "127.0.0.1"
+  port: 11111
+
+focuser:
+  name: "ZWO_EAF"
+  ip: "127.0.0.1"
+  port: 11111
+
+server:
+  path: "C:\\Program Files\\ASCOM\\RemoteServer\\RemoteServer.exe"
+  exe: "RemoteServer.exe"
+  ip: "127.0.0.1"
+  port: 11111
+
+ds9:
+  path: "C:\\SAOImageDS9\\ds9.exe"
+  exe: "ds9.exe"

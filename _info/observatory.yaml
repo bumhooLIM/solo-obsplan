@@ -1,0 +1,6 @@
+observatory:
+  name: "Sierra Remote Observatories"
+  longitude: "-119:24:41"
+  latitude: "+37:04:18"
+  elevation: 1400
+  roof_status_file: "D:\\RoofStatusFile.txt"
