@@ -28,10 +28,14 @@ except Exception as e:
     obs_logger.error(f"FAIL: Could not load YAML configurations: {e}")
     sys.exit(1)
 
+t_addr = f"{eq['telescope']['ip']}:{eq['telescope']['port']}"
+c_addr = f"{eq['camera']['ip']}:{eq['camera']['port']}"
+f_addr = f"{eq['focuser']['ip']}:{eq['focuser']['port']}"
+
 # Initialize Hardware
-T = Telescope(eq['telescope']['ip'], eq['telescope']['port'])
-C = Camera(eq['camera']['ip'], eq['camera']['port'])
-F = Focuser(eq['focuser']['ip'], eq['focuser']['port'])
+T = Telescope(t_addr, eq['telescope']['device_number'])
+C = Camera(c_addr, eq['camera']['device_number'])
+F = Focuser(f_addr, eq['focuser']['device_number'])
 
 # --- Argparse ---
 parser = argparse.ArgumentParser()

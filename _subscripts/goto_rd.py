@@ -18,7 +18,10 @@ try:
     # 1. Load Equipment (Telescope IP/Port)
     with open(directory.INFO_DIR / "equipment.yaml", 'r') as file:
         eq_config = yaml.safe_load(file)
-    T = Telescope(eq_config['telescope']['ip'], eq_config['telescope']['port'])
+
+    telescope_address = f"{eq_config['telescope']['ip']}:{eq_config['telescope']['port']}"
+    telescope_device = eq_config['telescope']['device_number']
+    T = Telescope(telescope_address, telescope_device)
 
     # 2. Load Observatory Location (For safety checks)
     with open(directory.INFO_DIR / "observatory.yaml", 'r') as file:

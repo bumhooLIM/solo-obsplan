@@ -15,12 +15,11 @@ from logger import obs_logger
 config_file = directory.INFO_DIR / "equipment.yaml"
 
 with open(config_file, 'r') as file:
-    config = yaml.safe_load(file)
+    eq_config = yaml.safe_load(file)
 
-# Extract Telescope IP and Port by name
-telescope_ip = config['telescope']['ip']
-telescope_port = config['telescope']['port']
-T = Telescope(telescope_ip, telescope_port)
+telescope_address = f"{eq_config['telescope']['ip']}:{eq_config['telescope']['port']}"
+telescope_device = eq_config['telescope']['device_number']
+T = Telescope(telescope_address, telescope_device)
 
 # --- Argparse Setting ---
 parser = argparse.ArgumentParser()

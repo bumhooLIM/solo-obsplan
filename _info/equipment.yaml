@@ -4,21 +4,25 @@ telescope:
   diameter: 279.4
   ip: "127.0.0.1"
   port: 11111
+  device_number: 0
 
 camera:
-  name: "Kepler_FLI4040"
+  name: "Kepler_4040"
   pixel_size: 9.0
   ip: "127.0.0.1"
   port: 11111
+  device_number: 0
 
 focuser:
   name: "ZWO_EAF"
   ip: "127.0.0.1"
   port: 11111
+  device_number: 0
 
 server:
   path: "C:\\Program Files\\ASCOM\\RemoteServer\\RemoteServer.exe"
   exe: "RemoteServer.exe"
+  mount_exe: "ASCOM.HUBOI.exe"
   ip: "127.0.0.1"
   port: 11111
 

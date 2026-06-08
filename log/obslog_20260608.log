@@ -1,0 +1,19 @@
+[2026-06-08 14:33:25 UT] [INFO] Loaded Observatory Info: Sierra Remote Observatories (Lat: 37.0717°, Lon: -119.4114°, Elev: 1400m)
+[2026-06-08 14:33:25 UT] [ERROR] Plan file 'obsplan.yaml' not found.
+[2026-06-08 14:39:48 UT] [ERROR] Failed to load observatory configuration: [Errno 2] No such file or directory: '/Users/bumhoo7/Desktop/repo/solo-obsplan/plans/obsplan_sample.yaml'
+[2026-06-08 14:40:28 UT] [ERROR] Failed to load observatory configuration: list indices must be integers or slices, not str
+[2026-06-08 14:41:14 UT] [INFO] Loaded Observatory Info: Sierra Remote Observatories (Lat: 37.0717°, Lon: -119.4114°, Elev: 1400m)
+[2026-06-08 14:41:14 UT] [ERROR] Plan file 'obsplan_example.yaml' not found.
+[2026-06-08 14:41:32 UT] [INFO] Loaded Observatory Info: Sierra Remote Observatories (Lat: 37.0717°, Lon: -119.4114°, Elev: 1400m)
+[2026-06-08 14:41:32 UT] [ERROR] Plan file 'obsplan_example.yaml' not found.
+[2026-06-08 14:41:51 UT] [INFO] Loaded Observatory Info: Sierra Remote Observatories (Lat: 37.0717°, Lon: -119.4114°, Elev: 1400m)
+[2026-06-08 14:41:51 UT] [INFO] --- Starting SOLO Robotic Operation: /Users/bumhoo7/Desktop/repo/solo-obsplan/plans/obsplan_example.yaml ---
+[2026-06-08 14:41:51 UT] [INFO] >> [Step 1] Executing: WAIT_UNTIL
+[2026-06-08 14:41:51 UT] [INFO] Pausing sequence. Waiting until 2026-06-08 15:00:00 UT (Wait time: 18.1 minutes).
+[2026-06-08 14:42:48 UT] [INFO] Loaded Observatory Info: Sierra Remote Observatories (Lat: 37.0717°, Lon: -119.4114°, Elev: 1400m)
+[2026-06-08 14:42:48 UT] [INFO] --- Starting SOLO Robotic Operation: /Users/bumhoo7/Desktop/repo/solo-obsplan/plans/obsplan_example.yaml ---
+[2026-06-08 14:42:48 UT] [INFO] >> [Step 1] Executing: CHECK_OBSERVATORY
+[2026-06-08 14:42:48 UT] [INFO] --> Verifying observatory readiness...
+[2026-06-08 14:42:48 UT] [INFO] Checking local roof status via networked drive...
+[2026-06-08 14:42:48 UT] [ERROR] FAIL : Roof status file not found at D:\RoofStatusFile.txt. Aborting for safety.
+[2026-06-08 14:42:48 UT] [ERROR] [FATAL ERROR] Roof is closed or network is down. Aborting entire night.

@@ -15,9 +15,10 @@ try:
     with open(directory.INFO_DIR / "equipment.yaml", 'r') as file:
         eq_config = yaml.safe_load(file)
     
-    telescope_ip = eq_config['telescope']['ip']
-    telescope_port = eq_config['telescope']['port']
-    T = Telescope(telescope_ip, telescope_port)
+    telescope_address = f"{eq_config['telescope']['ip']}:{eq_config['telescope']['port']}"
+    telescope_device = eq_config['telescope']['device_number']
+    T = Telescope(telescope_address, telescope_device)
+    
 except Exception as e:
     obs_logger.error(f"FAIL: Could not load configuration ({e})")
     sys.exit(1)

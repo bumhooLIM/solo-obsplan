@@ -1,0 +1,33 @@
+# wait until e.g., nautical twilight
+# - command: wait_until
+#   ut: "15:00:00"
+
+# Check roof status (OPEN or CLOSE)
+- command: check_observatory
+
+# Start ASCOM remote server & turn on cooler.
+- command: start_sequence
+  cooler_temp: -5.0
+
+# wait until e.g., astronomical twilight
+# - command: wait_until
+#   ut: "15:00:00"
+
+- command: observe_rd
+  target_name: "Asteroid_Alpha"
+  ra: "18:00:00"
+  dec: "45:00:00"
+  exptime: 120.0
+  iter: 5
+
+- command: park
+
+- command: dark
+  exptime: 60.0
+  iter: 9
+
+- command: bias
+  iter: 9
+
+# Cooler off and kill the server
+- command: end_sequence

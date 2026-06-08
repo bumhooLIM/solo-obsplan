@@ -9,6 +9,9 @@ INFO_DIR = WORK_DIR / "_info"
 # Directory paths for executables and subscripts.
 SCRIPT_DIR = WORK_DIR / "_subscripts"
 
+# Directory path for observation plans (YAML files)
+PLAN_DIR = WORK_DIR / "plans"
+
 # Directory path for log files
 LOG_DIR = WORK_DIR / "log"
 

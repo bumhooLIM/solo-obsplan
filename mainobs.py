@@ -37,6 +37,7 @@ daily_output_dir.mkdir(parents=True, exist_ok=True)
 
 # --- Main Function to Execute YAML Plan ---
 def execute_yaml_plan(yaml_file):
+    
     if not os.path.exists(yaml_file):
         obs_logger.error(f"Plan file '{yaml_file}' not found.")
         return
@@ -72,17 +73,19 @@ def execute_yaml_plan(yaml_file):
         elif command == "start_sequence":
             obs_logger.info("--> Executing pre-observation startup sequence...")
             subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "server.py"), "-s", "on"])
-            sleep(5) # Give the server a moment to boot up before we check the roof status
+            sleep(10) # Give the server a moment to boot up before we check the roof status
             # subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "parking.py"), "-p", "unpark"])
             # subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "tracking.py"), "-t", "on"])
-            temp = step.get('temp', -10.0) 
+            temp = step.get('cooler_temp', -10.0) 
             subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "cooler.py"), "-s", "on", "-t", str(temp)])
+            sleep(10)
             
         elif command == "end_sequence":
             obs_logger.info("--> Initiating after-observation shutdown sequence...")
             # subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "tracking.py"), "-t", "off"])
             # subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "parking.py"), "-p", "park"])
             subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "cooler.py"), "-s", "off"])
+            sleep(10) # Give the cooler a moment to power down before shutting off the server
             subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "server.py"), "-s", "off"])
             
         elif command == "observe_rd":
@@ -106,7 +109,7 @@ def execute_yaml_plan(yaml_file):
                     obs_logger.info("Instantly skipping to the next target field...")
                     continue
                 
-                obs_logger.info(f"    [SYSTEM] Target safely observable (Alt: {current_alt:.1f}°). Proceeding.")
+                obs_logger.info(f"    [SYSTEM] Target safely observable (Alt: {current_alt:.1f}°, Az: {current_az:.1f}°). Proceeding.")
                 
             except Exception as e:
                 obs_logger.error(f"Observability check failed: {e}.")
@@ -119,6 +122,7 @@ def execute_yaml_plan(yaml_file):
             
             # Check if goto_rd.py succeeded before exposing
             if slew_proc.returncode == 0:
+                sleep(30) # Give the mount a moment to settle after slewing before starting exposures
                 obs_logger.info(f"--> Starting exposures for {name}")
                 subprocess.run([
                     sys.executable, str(directory.SCRIPT_DIR / "exposure.py"),
@@ -159,13 +163,18 @@ def execute_yaml_plan(yaml_file):
             obs_logger.info("--> Resetting telescope position to home...")
             subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "tracking.py"), "-t", "off"])
             subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "parking.py"), "-p", "park"])
+            sleep(10) # Give the mount a moment to park before homing
             home_proc = subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "homing.py"), "-c", "home"])
             if home_proc.returncode != 0:
                 obs_logger.warning("Homing failed. Proceeding with caution...")
+            sleep(10)
 
-        elif command == "confirm_end":
-            obs_logger.info(f"\n[SYSTEM] Shutdown Complete. Successful Observations: {obs_completed}")
-            break
+        # elif command == "confirm_end":
+        #     obs_logger.info(f"\n[SYSTEM] Shutdown Complete. Successful Observations: {obs_completed}")
+        #     break
+
+        else:
+            obs_logger.warning(f"Unknown command '{command}' in YAML. Skipping this step.")
 
 if __name__ == "__main__":
-    execute_yaml_plan("obsplan.yaml")
+    execute_yaml_plan(directory.PLAN_DIR / "obsplan_example.yaml")
