@@ -64,30 +64,69 @@ def execute_yaml_plan(yaml_file):
 
         elif command == "check_observatory":
             obs_logger.info("--> Verifying observatory readiness...")
-            roof_proc = subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "check_roof_status.py")])
             
-            # The ONLY time we stop the entire sequence is if the roof is closed!
+            roof_proc = subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "check_roof_status.py")])
             if roof_proc.returncode != 0:
+                # The ONLY time we stop the entire sequence is if the roof is closed.
                 obs_logger.error("[FATAL ERROR] Roof is closed or network is down. Aborting entire night.")
                 break
 
         elif command == "start_sequence":
             obs_logger.info("--> Executing pre-observation startup sequence...")
+
+            # 1. Turn on Mount Power
+            subprocess.Popen([sys.executable, str(directory.SCRIPT_DIR / "power_switch.py"), "-s", "on"])
+            sleep(10)
+            
+            # 2. Boot up the server.
             subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "server.py"), "-s", "on"])
-            sleep(10) # Give the server a moment to boot up before we check the roof status
-            # subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "parking.py"), "-p", "unpark"])
-            # subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "tracking.py"), "-t", "on"])
+            sleep(10)
+            
+            # 3. Check the parking status and park if necessary
+            subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "parking.py"), "-p", "park"])
+            sleep(10)
+            
+            # 4. Home the mount
+            home_proc = subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "homing.py"), "-c", "home"])
+            if home_proc.returncode != 0:
+                obs_logger.warning("Homing failed. Proceeding with caution...")
+            sleep(10)
+            
+            # 5. Cooler on
             temp = step.get('cooler_temp', -10.0) 
             subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "cooler.py"), "-s", "on", "-t", str(temp)])
             sleep(10)
             
         elif command == "end_sequence":
             obs_logger.info("--> Initiating after-observation shutdown sequence...")
-            # subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "tracking.py"), "-t", "off"])
-            # subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "parking.py"), "-p", "park"])
+                      
+            # 1. Stop tracking and park the mount  
+            subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "tracking.py"), "-t", "off"])
+            sleep(10)
+            
+            # 2. Double check parking status and park if necessary
+            subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "parking.py"), "-p", "park"])
+            sleep(10)
+            
+            # 3. Cooler off
             subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "cooler.py"), "-s", "off"])
-            sleep(10) # Give the cooler a moment to power down before shutting off the server
+            sleep(10) 
+            
+            # 4. Shutdown the server
             subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "server.py"), "-s", "off"])
+            sleep(10)
+            
+            # 5. Turn off Mount Power
+            subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "power_switch.py"), "-s", "off"])
+            sleep(10)
+            
+        elif command == "park":
+            obs_logger.info("--> Resetting telescope position to home...")
+            subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "tracking.py"), "-t", "off"])
+            sleep(10)
+            
+            subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "parking.py"), "-p", "park"])
+            sleep(10)
             
         elif command == "observe_rd":
             name = step.get('target_name', 'unknown_target')
@@ -129,7 +168,7 @@ def execute_yaml_plan(yaml_file):
             
             # Check if goto_rd.py succeeded before exposing
             if slew_proc.returncode == 0:
-                sleep(30) # Give the mount a moment to settle after slewing before starting exposures
+                sleep(60) # Give the mount a moment to settle after slewing before starting exposures
                 obs_logger.info(f"--> Starting exposures for {name}")
                 subprocess.run([
                     sys.executable, str(directory.SCRIPT_DIR / "exposure.py"),
@@ -156,8 +195,58 @@ def execute_yaml_plan(yaml_file):
                 obs_logger.warning(f"Slew failed for {name}. Instantly skipping to next target field...")
                 continue # Only skips this specific target if it was a standard mechanical error
 
-        elif command in ["dark", "bias"]:
-            name = command.capitalize() # Sets name to "Dark" or "Bias"
+        elif command == "sync_field":
+            name = step.get('target_name', 'Sync_Target')
+            ra = str(step.get('ra'))
+            dec = str(step.get('dec'))
+
+            obs_logger.info(f"--> [SYNC SEQUENCE] Calibrating mount coordinates for {name}...")
+
+            # --- Step 1: Slew to Target ---
+            slew_proc = subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "goto_rd.py"), "-a", ra, "-d", dec])
+            if slew_proc.returncode != 0:
+                obs_logger.error(f"Slew failed for {name}. Aborting sync sequence.")
+                continue
+            sleep(60) 
+            
+            # --- Step 2: Take Reference Exposure ---
+            obs_logger.info("Taking 10-second reference exposure for plate solving...")
+            exposure_proc = subprocess.run([
+                sys.executable, str(directory.SCRIPT_DIR / "exposure.py"),
+                "-n", "Sync_Image", 
+                "-t", "10.0", 
+                "-i", "1",
+                "-x", "1", 
+                "-y", "1", 
+                "--output_dir", str(daily_output_dir)
+            ])
+            
+            if exposure_proc.returncode != 0:
+                obs_logger.error("Failed to capture reference image. Aborting sync sequence.")
+                continue
+            sleep(10)
+            
+            # --- Step 3: Retrieve Image Path & Execute Query/Sync ---
+            prev_img_file = directory.INFO_DIR / "prev_img.txt"
+            if not prev_img_file.exists():
+                obs_logger.error("FAIL: prev_img.txt not found. Cannot locate image for sync.")
+                continue
+                
+            with open(prev_img_file, "r") as f:
+                target_fits_path = f.read().strip()
+            
+            # Execute the combined Query and Sync script!
+            sync_proc = subprocess.run([
+                sys.executable, str(directory.SCRIPT_DIR / "query_and_sync.py"), 
+                "-f", target_fits_path
+            ])
+            
+            if sync_proc.returncode != 0:
+                obs_logger.error("Query/Sync failed. Mount model was not updated.")
+                continue
+
+
+        elif command in ["dark", "bias"]: # Sets name to "Dark" or "Bias"
             # Bias overrides exptime to 0.01; Dark pulls it from the YAML
             exptime = float(step.get('exptime', 0.01)) if command == "dark" else 0.01
             iterations = int(step.get('iter', 1))
@@ -181,16 +270,6 @@ def execute_yaml_plan(yaml_file):
                 obs_completed += iterations
             except Exception as e:
                 obs_logger.error(f"Failed to execute calibration frames: {e}")
-
-        elif command == "park":
-            obs_logger.info("--> Resetting telescope position to home...")
-            subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "tracking.py"), "-t", "off"])
-            subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "parking.py"), "-p", "park"])
-            sleep(10) # Give the mount a moment to park before homing
-            home_proc = subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "homing.py"), "-c", "home"])
-            if home_proc.returncode != 0:
-                obs_logger.warning("Homing failed. Proceeding with caution...")
-            sleep(10)
 
         # elif command == "confirm_end":
         #     obs_logger.info(f"\n[SYSTEM] Shutdown Complete. Successful Observations: {obs_completed}")

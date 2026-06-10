@@ -119,20 +119,44 @@ def slew_mount():
                 
                 time.sleep(600) # Ping the roof status every 600 seconds
 
-        # --- 4. Pre-Slew Preparation ---
+        # --- 4. Pre-Slew Preparation (With Sync Buffers) ---
         if getattr(T, 'AtPark', False):
             obs_logger.info("Mount is parked. Unparking before slew...")
             T.Unpark()
+            
+            # Wait for physical unpark
             while getattr(T, 'AtPark', True):
                 time.sleep(1)
+                
+            # CRITICAL FIX: The Hardware-to-Software Sync Buffer
+            # Give the HUBO-i Windows UI 3 seconds to register that the mount is no longer parked.
+            obs_logger.info("Unpark complete. Waiting for HUBO-i driver state to sync...")
+            time.sleep(3.0) 
         
+        # --- Safely Engage Tracking ---
         if not getattr(T, 'Tracking', False):
+            obs_logger.info("Engaging mount tracking...")
             T.Tracking = True
+            time.sleep(3.0) # Give driver time to apply tracking
+            
+            # Verification check to ensure the driver accepted the command
+            if not getattr(T, 'Tracking', False):
+                obs_logger.warning("Tracking failed to engage! Attempting secondary override...")
+                T.Tracking = True
+                time.sleep(3.0)
+                
+            if getattr(T, 'Tracking', False):
+                obs_logger.info("SUCCESS : Tracking is ON.")
+            else:
+                obs_logger.error("FATAL : Mount refuses to track. Aborting slew.")
+                sys.exit(1)
 
         # --- 5. Asynchronous Slew & Polling Loop ---
         obs_logger.info("Slewing initiated. Waiting for mount to arrive...")
         T.SlewToCoordinatesAsync(ra_hours, dec_deg)
-        time.sleep(2) 
+        
+        # Buffer to let the ASCOM driver register the moving state
+        time.sleep(3.0) 
         
         timeout = 180 
         start_time = time.time()

@@ -26,6 +26,11 @@ server:
   ip: "127.0.0.1"
   port: 11111
 
+mount_power:
+  name: "Cleware_USB_Switch_M"
+  serial: "564920"
+  exe_path: "C:\\Program Files\\USBswitchCMD\\USBswitchCmd.exe" # Verify this path on your PC
+
 ds9:
   path: "C:\\SAOImageDS9\\ds9.exe"
   exe: "ds9.exe"

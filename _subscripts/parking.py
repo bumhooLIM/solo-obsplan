@@ -47,6 +47,7 @@ if command == "park":
                 time.sleep(1)
            
             obs_logger.info("Successfully parked telescope.")
+            time.sleep(5)
     
     except Exception as e:
         obs_logger.error(f"FAIL : Park telescope. Error: {str(e)}")
@@ -68,6 +69,7 @@ elif command == "unpark":
                 time.sleep(1)
 
             obs_logger.info("Successfully unparked telescope.")
+            time.sleep(5)
     
     except Exception as e:
         obs_logger.error(f"FAIL : Unpark telescope. Error: {str(e)}")

@@ -35,18 +35,18 @@ try:
         obs_logger.info(f"Initializing FLI Cooler sequence (Target: {args.temp}°C)...")
         
         # 1. Turn on the cooler
-        C.SetCCDTemperature = args.temp
-        time.sleep(1.5) 
         C.CoolerOn = True
+        time.sleep(3.0) 
+        C.SetCCDTemperature = args.temp
         
         obs_logger.info(f"Cooler On. Waiting for temperature to stabilize near {args.temp}°C...")
         
         # --- 2. The Temperature Polling Loop ---
-        timeout = 600 # 10 minutes maximum wait
+        timeout = 1800 # 30 minutes maximum wait
         tolerance = 1.0 # Within 1 degree is considered "SUCCESS"
         start_time = time.time()
         
-        heartbeat_interval = 30 # Log the current temp every 30 seconds
+        heartbeat_interval = 60 # Log the current temp every 60 seconds
         last_heartbeat = time.time()
         
         while True:
@@ -66,10 +66,11 @@ try:
                 
             # Condition C: Heartbeat Logging
             if time.time() - last_heartbeat > heartbeat_interval:
-                obs_logger.info(f"Status: Cooling in progress... (Current: {current_temp:.1f}°C / Target: {args.temp}°C)")
+                cooler_pwr = getattr(C, 'CoolerPower', 'Unknown')
+                obs_logger.info(f"Status: Cooling in progress... (Current: {current_temp:.1f}°C / Target: {args.temp}°C / Power: {cooler_pwr}%)")
                 last_heartbeat = time.time()
                 
-            time.sleep(5) # Check temperature every 5 seconds
+            time.sleep(30) # Check temperature every 30 seconds
         
     elif switch == "off":
         obs_logger.info("Initiating camera warm-up sequence...")

@@ -16,4 +16,4 @@ PLAN_DIR = WORK_DIR / "plans"
 LOG_DIR = WORK_DIR / "log"
 
 # Directory path to save observational data
-DATA_DIR = WORK_DIR / "data"
+DATA_DIR = Path("C:/RASA_Data/")
