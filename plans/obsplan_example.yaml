@@ -1,6 +1,6 @@
 # wait until e.g., nautical twilight
-- command: wait_until
-  ut: "04:00:00"
+# - command: wait_until
+#   ut: "04:00:00"
 
 # Check roof status (OPEN or CLOSE)
 - command: check_observatory
@@ -10,29 +10,40 @@
   cooler_temp: -5.0
 
 # wait until e.g., astronomical twilight
-- command: wait_until
-  ut: "04:30:00"
+# - command: wait_until
+#   ut: "04:30:00"
 
 - command: sync_field
-  target_name: "dusk"
-  ra: "18:00:00"
-  dec: "45:00:00"
+  target_name: "dawn"
+  ra: "19:00:00"
+  dec: "15:00:00"
 
-- command: observe_rd
-  target_name: "dusk_field1"
-  ra: "10:44:27.33"
-  dec: "+08:02:23.4"
-  exptime: 60.0
-  iter: 5
+- command: focus_auto
+  range_start: 36500
+  range_end: 38500
+  step: 200
+  exptime: 5.0
 
 - command: park
 
-- command: dark
-  exptime: 60.0
-  iter: 9
+- command: wait_until
+  ut: "09:30:00"
 
-- command: bias
-  iter: 9
+- command: observe_rd
+  target_name: "dawn_field1"
+  ra: "22:16:29.36"
+  dec: "-09:59:08.2"
+  exptime: 60.0
+  iter: 90
+
+- command: park
+
+# - command: dark
+#   exptime: 60.0
+#   iter: 9
+
+# - command: bias
+#   iter: 9
 
 # Cooler off and kill the server
-# - command: end_sequence
+- command: end_sequence

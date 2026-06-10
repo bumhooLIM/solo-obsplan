@@ -239,12 +239,104 @@ def execute_yaml_plan(yaml_file):
             sync_proc = subprocess.run([
                 sys.executable, str(directory.SCRIPT_DIR / "query_and_sync.py"), 
                 "-f", target_fits_path
-            ])
+            ], capture_output=True, text=True)
             
             if sync_proc.returncode != 0:
                 obs_logger.error("Query/Sync failed. Mount model was not updated.")
+                # Print the exact Python crash log to your log_book.txt!
+                obs_logger.error(f"CRASH DETAILS: {sync_proc.stderr.strip()}") 
                 continue
 
+        elif command == "focus_auto":
+            obs_logger.info("--> [AUTOFOCUS SEQUENCE] Initiating V-Curve profiling...")
+            
+            f_start = int(step.get('range_start', 35500))
+            f_end = int(step.get('range_end', 37500))
+            f_step = int(step.get('step', 200))
+            exptime = float(step.get('exptime', 5.0))
+            
+            # --- 1. Prepare Temporary Focus Directory ---
+            focus_dir = directory.DATA_DIR / "focus_temp"
+            focus_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Delete any old focus images from previous runs
+            for f in focus_dir.glob("*.fits"):
+                f.unlink()
+                
+            # --- 2. Record Initial Focus Position ---
+            focus_proc = subprocess.run(
+                [sys.executable, str(directory.SCRIPT_DIR / "focus.py"), "-f", "0"],
+                capture_output=True, text=True
+            )
+            
+            initial_focus = None
+            # Search ONLY stdout for the clean, unformatted print string
+            for line in focus_proc.stdout.split('\n'):
+                if line.startswith("FOCUS_POS:"):
+                    initial_focus = int(line.split(":")[1].strip())
+            
+            if initial_focus is None:
+                obs_logger.error("FAIL: Could not read current focuser position. Aborting autofocus.")
+                continue
+                
+            obs_logger.info(f"Initial focus position recorded as: {initial_focus}")
+            current_focus = initial_focus
+            
+            # --- 3. The Imaging Loop ---
+            positions = range(f_start, f_end + f_step, f_step)
+            for pos in positions:
+                # Calculate relative steps to move
+                dx = pos - current_focus
+                obs_logger.info(f"Moving focuser to {pos}...")
+                subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "focus.py"), "-f", str(dx)])
+                current_focus = pos
+                
+                # Take Image (Named with focus position so find_best_focus.py can read it)
+                obs_logger.info(f"Taking {exptime}s exposure at focus {pos}...")
+                subprocess.run([
+                    sys.executable, str(directory.SCRIPT_DIR / "exposure.py"),
+                    "-n", f"focus_{pos}",
+                    "-t", str(exptime),
+                    "-i", "1",
+                    "-x", "1", "-y", "1",
+                    "--output_dir", str(focus_dir)
+                ])
+                
+            # --- 4. Analyze Images & Fit V-Curve ---
+            obs_logger.info("Analyzing images and fitting V-Curve...")
+            analyze_proc = subprocess.run(
+                [sys.executable, str(directory.SCRIPT_DIR / "find_best_focus.py"), "-d", str(focus_dir)],
+                capture_output=True, text=True
+            )
+            
+            best_focus = None
+            for line in analyze_proc.stdout.split('\n'):
+                if line.startswith("BEST_FOCUS:"):
+                    best_focus = int(line.split(":")[1].strip())
+                    
+            if best_focus is None:
+                obs_logger.error("FAIL: Could not calculate best focus from images.")
+                obs_logger.info(f"Reverting to initial focus position: {initial_focus}")
+                dx = initial_focus - current_focus
+                subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "focus.py"), "-f", str(dx)])
+                continue
+                
+            # --- 5. The Safety Fallback Gate ---
+            deviation = abs(best_focus - initial_focus)
+            if deviation > 2000:
+                obs_logger.warning(f"DANGER: Best focus ({best_focus}) deviates from initial ({initial_focus}) by {deviation} steps!")
+                obs_logger.warning("This implies a bad V-Curve fit or heavy cloud cover. Ignoring result.")
+                obs_logger.info(f"Reverting to initial safe focus position: {initial_focus}")
+                target_focus = initial_focus
+            else:
+                obs_logger.info(f"Best focus ({best_focus}) is within safe bounds (Deviation: {deviation}). Applying new focus.")
+                target_focus = best_focus
+                
+            # --- 6. Final Focuser Adjustment ---
+            dx = target_focus - current_focus
+            subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "focus.py"), "-f", str(dx)])
+            
+            obs_logger.info(f"--> [AUTOFOCUS SEQUENCE] Complete. Final Position Locked: {target_focus}")
 
         elif command in ["dark", "bias"]: # Sets name to "Dark" or "Bias"
             # Bias overrides exptime to 0.01; Dark pulls it from the YAML

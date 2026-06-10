@@ -36,6 +36,8 @@ def execute_focus():
         # If dx is 0, we just log the current position and exit
         if dx == 0:
             obs_logger.info(f"Current Focuser Position: {current_pos}")
+            # Add this raw print so mainobs.py can safely capture it:
+            print(f"FOCUS_POS:{current_pos}") 
             sys.exit(0)
 
         # --- 1. Calculate Target & Enforce Boundaries ---
