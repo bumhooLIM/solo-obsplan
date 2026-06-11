@@ -1,4 +1,0 @@
-[Name]: SRO
-[Longitude]: -119:24:41
-[Latitude]: +37:04:18
-[Elevation]: 1400

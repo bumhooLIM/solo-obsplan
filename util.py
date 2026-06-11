@@ -6,6 +6,7 @@ import datetime
 from astropy.coordinates import EarthLocation, SkyCoord, AltAz, get_sun, get_body, Angle
 from astropy.time import Time
 from astropy import units as u
+from astroplan import Observer, FixedTarget
 
 import directory # Utilizing your new centralized path manager
 
@@ -51,6 +52,94 @@ def equatorial2horizon(ra, dec, latitude=37.07167*u.deg, longitude=-119.41139*u.
     
     # Returning raw float values is much cleaner for logical comparisons downstream
     return altaz.alt.deg, altaz.az.deg
+
+def is_target_visible_timegrid(
+    ra: u.Quantity,                       # 1D Array of Right ascension [angle]
+    dec: u.Quantity,                      # 1D Array of Declination [angle]
+    dates,                                # 1D Array of Time | float (JD) (UTC)
+    location=EarthLocation(lat=37.07167*u.deg, lon=-119.41139*u.deg, height=1400*u.m),                             # EarthLocation | str
+    *,
+    elev_min: u.Quantity = 30 * u.deg,    # Minimum altitude
+    duration: u.Quantity = 1 * u.hour,    # Required continuous observing time
+    dt_step: u.Quantity = 10 * u.min,     # Sampling cadence
+):
+    """
+    Determine target visibility over an array of dates using 2D time grids.
+    Returns:
+        is_visible_arr: (N,) boolean array
+        duration_arr: (N,) float array of max continuous durations in hours
+        start_time_arr: (N,) string array of observation start times (ISO)
+        end_time_arr: (N,) string array of observation end times (ISO)
+    """
+
+    obs = Observer(location=location, name=str(location), timezone="UTC")
+
+    t0 = dates if isinstance(dates, Time) else Time(dates)
+    t0 = t0.utc
+    N = len(t0)
+
+    step_min = max(1, int(np.floor(dt_step.to(u.min).value)))
+    time_offsets = np.arange(-12 * 60, 12 * 60 + step_min, step_min) * u.min
+    
+    # 1. Build the 2D time grid: (N, T)
+    time_grid = t0[:, np.newaxis] + time_offsets[np.newaxis, :]
+
+    # 2. SPEED OPTIMIZATION: Avoid redundant Sun calculations for `is_night`
+    # If all epochs are within a 24-hour period, compute twilight once and broadcast.
+    if (t0.max() - t0.min()).jd < 1.0:
+        base_time_grid = t0[0] + time_offsets
+        A_dark_1d = obs.is_night(base_time_grid, horizon=-18 * u.deg)
+        A_dark = np.tile(A_dark_1d, (N, 1))  # Broadcast 1D to (N, T)
+    else:
+        A_dark = obs.is_night(time_grid, horizon=-18 * u.deg)
+
+    # 3. Vectorized AltAz check
+    coord = SkyCoord(ra=ra, dec=dec)[:, np.newaxis]
+    target = FixedTarget(coord=coord, name="Target")
+    
+    altitudes = obs.altaz(time_grid, target).alt
+    A_high = altitudes >= elev_min
+
+    # 4. Combine masks
+    A_vis = A_high & A_dark
+
+    # 5. Output arrays formulation
+    is_visible_arr = np.zeros(N, dtype=bool)
+    duration_arr = np.zeros(N, dtype=float)           # Changed from np.nan to 0.0
+    start_time_arr = np.full(N, None, dtype=object)   # Store ISO string times
+    end_time_arr = np.full(N, None, dtype=object)
+
+    dur_threshold = duration.to(u.hour).value
+    step_hr = step_min / 60.0
+
+    # 6. Extract continuous blocks per target
+    for i in range(N):
+        row_vis = A_vis[i]
+        
+        padded = np.concatenate([[False], row_vis, [False]])
+        changes = np.flatnonzero(padded[1:] != padded[:-1])
+        starts, stops = changes[::2], changes[1::2]
+        
+        if len(starts) > 0:
+            durs = (stops - starts) * step_hr
+            
+            # Find the longest continuous observation window tonight
+            best_idx = np.argmax(durs) 
+            max_dur = durs[best_idx]
+            
+            if max_dur >= dur_threshold:
+                is_visible_arr[i] = True
+                duration_arr[i] = round(max_dur, 2)
+                
+                # Extract actual Time values. 
+                # (stops is the first index of False, so stops-1 is the final True index)
+                start_idx = starts[best_idx]
+                end_idx = stops[best_idx] - 1
+                
+                start_time_arr[i] = time_grid[i, start_idx].iso
+                end_time_arr[i] = time_grid[i, end_idx].iso
+
+    return is_visible_arr, duration_arr, start_time_arr, end_time_arr
 
 # # --- Catalog Search ---
 # def find_altaz(target, time="now", latitude=37.07167*u.deg, longitude=-119.41139*u.deg, height=1400*u.m):

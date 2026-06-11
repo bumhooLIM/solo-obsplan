@@ -29,9 +29,11 @@ try:
         
     lat_str = str(obs_config['observatory']['latitude'])
     lon_str = str(obs_config['observatory']['longitude'])
+    
     OBS_LAT = Angle(lat_str, unit=u.deg).deg
     OBS_LON = Angle(lon_str, unit=u.deg).deg
-    # OBS_ELEV = obs_config['observatory']['elevation']
+    OBS_ELEV = float(obs_config['observatory']['elevation']) # Extracted elevation
+
 except Exception as e:
     obs_logger.error(f"FAIL: Could not load configuration files ({e})")
     sys.exit(1)
@@ -42,16 +44,16 @@ parser.add_argument("-a", "--ra", dest="ra", required=True)
 parser.add_argument("-d", "--dec", dest="dec", required=True)
 args = parser.parse_args()
 
-def is_dawn(lat, lon):
+def is_dawn(lat, lon, elev):
     """Returns True if the Sun is above -10 degrees altitude (Nautical Twilight)"""
-    loc = EarthLocation(lat=lat*u.deg, lon=lon*u.deg)
+    # Added height parameter mapping to OBS_ELEV in meters
+    loc = EarthLocation(lat=lat*u.deg, lon=lon*u.deg, height=elev*u.m) 
     now = Time.now()
     sun = get_sun(now).transform_to(AltAz(obstime=now, location=loc))
     return sun.alt.deg > -10.0
 
 def check_roof_open():
     """Silently runs the roof checker script. Returns True if Open, False if Closed/Error."""
-    # We suppress the output so we don't spam the log file every 60 seconds
     result = subprocess.run(
         [sys.executable, str(directory.SCRIPT_DIR / "check_roof_status.py")], 
         capture_output=True
@@ -72,44 +74,48 @@ def slew_mount():
 
         # --- 2. Hardware Safety Check ---
         alt, az = util.equatorial2horizon(ra_hours, dec_deg, latitude=OBS_LAT, longitude=OBS_LON, t="now")
-        if alt <= 15.0:
+        if alt <= 20.0:
             obs_logger.error(f"FAIL: Target is too low (Alt: {alt:.1f}°). Slewing aborted to protect mount.")
             sys.exit(1)
         if 170.0 <= az <= 190.0:
             obs_logger.error(f"FAIL: Target is crossing the meridian (Az: {az:.1f}°). Slewing aborted.")
             sys.exit(1)
 
-        # --- 3. WEATHER WAIT LOOP ---
-        max_wait_time = 7200  # 2 Hours in seconds
+        # --- 3. GLOBAL DAWN / TWILIGHT CHECK ---
+        # Passing OBS_ELEV to the updated function
+        if is_dawn(OBS_LAT, OBS_LON, OBS_ELEV): 
+            obs_logger.error("DAWN DETECTED: The sun is above -10° altitude. Aborting slew and sequence.")
+            sys.exit(22) 
+
+        # --- 4. WEATHER WAIT LOOP ---
+        max_wait_time = 7200  
         wait_start = time.time()
-        heartbeat = 1800       # Print a log message every 30 minutes
+        heartbeat = 1800       
         last_heartbeat = time.time()
 
         if not check_roof_open():
             obs_logger.warning("Roof is CLOSED. Entering weather standby mode...")
             
-            # CRITICAL SAFETY: Ensure mount is parked while waiting out the storm
             if not getattr(T, 'AtPark', False):
                 obs_logger.info("Parking mount to secure telescope during weather delay...")
                 T.Park()
                 while not getattr(T, 'AtPark', False):
                     time.sleep(1)
 
-            # Polling Loop for the Roof
             while True:
                 if check_roof_open():
                     obs_logger.info("Roof has RE-OPENED! Resuming observation sequence.")
                     break
                 
                 # Check 1: Dawn / Sunrise
-                if is_dawn(OBS_LAT, OBS_LON):
+                if is_dawn(OBS_LAT, OBS_LON, OBS_ELEV):
                     obs_logger.error("DAWN DETECTED: The sun is rising. Aborting weather wait.")
-                    sys.exit(2) # Exit Code 2 = Dawn Abort
+                    sys.exit(22) 
                 
                 # Check 2: Timeout
                 if time.time() - wait_start > max_wait_time:
                     obs_logger.error(f"TIMEOUT: Roof remained closed for over {max_wait_time/60:.0f} minutes.")
-                    sys.exit(3) # Exit Code 3 = Global Weather Abort
+                    sys.exit(23) 
                 
                 # Heartbeat Logging
                 if time.time() - last_heartbeat > heartbeat:
@@ -117,19 +123,16 @@ def slew_mount():
                     obs_logger.info(f"Status: Still waiting for clear weather... (Timeout in {remaining:.0f} mins)")
                     last_heartbeat = time.time()
                 
-                time.sleep(600) # Ping the roof status every 600 seconds
+                time.sleep(600) 
 
-        # --- 4. Pre-Slew Preparation (With Sync Buffers) ---
+        # --- 5. Pre-Slew Preparation (With Sync Buffers) ---
         if getattr(T, 'AtPark', False):
             obs_logger.info("Mount is parked. Unparking before slew...")
             T.Unpark()
             
-            # Wait for physical unpark
             while getattr(T, 'AtPark', True):
                 time.sleep(1)
                 
-            # CRITICAL FIX: The Hardware-to-Software Sync Buffer
-            # Give the HUBO-i Windows UI 3 seconds to register that the mount is no longer parked.
             obs_logger.info("Unpark complete. Waiting for HUBO-i driver state to sync...")
             time.sleep(3.0) 
         
@@ -137,9 +140,8 @@ def slew_mount():
         if not getattr(T, 'Tracking', False):
             obs_logger.info("Engaging mount tracking...")
             T.Tracking = True
-            time.sleep(3.0) # Give driver time to apply tracking
+            time.sleep(3.0) 
             
-            # Verification check to ensure the driver accepted the command
             if not getattr(T, 'Tracking', False):
                 obs_logger.warning("Tracking failed to engage! Attempting secondary override...")
                 T.Tracking = True
@@ -151,12 +153,11 @@ def slew_mount():
                 obs_logger.error("FATAL : Mount refuses to track. Aborting slew.")
                 sys.exit(1)
 
-        # --- 5. Asynchronous Slew & Polling Loop ---
+        # --- 6. Asynchronous Slew & Polling Loop ---
         obs_logger.info("Slewing initiated. Waiting for mount to arrive...")
         T.SlewToCoordinatesAsync(ra_hours, dec_deg)
         
-        # Buffer to let the ASCOM driver register the moving state
-        time.sleep(3.0) 
+        time.sleep(3.0)
         
         timeout = 180 
         start_time = time.time()

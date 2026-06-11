@@ -1,8 +1,0 @@
-[Observer]:
-[Local Time]:
-[UTC]:
-[RA]:
-[DEC]:
-[ALT]:
-[AZ]:
-[Focus]:

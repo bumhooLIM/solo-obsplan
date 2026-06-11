@@ -1,0 +1,566 @@
+# wait until e.g., nautical twilight
+- command: wait_until
+  ut: "04:00:00"
+
+# Check roof status (OPEN or CLOSE)
+- command: check_observatory
+
+# Start ASCOM remote server & turn on cooler.
+- command: start_sequence
+  cooler_temp: -5.0
+
+# wait until e.g., astronomical twilight
+- command: wait_until
+  ut: "04:30:00"
+
+####
+# Dusk side observations
+####
+# - command: sync_field
+#   target_name: "dusk"
+#   ra: "19:00:00"
+#   dec: "15:00:00"
+
+- command: observe_rd
+  target_name: "dusk_test"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 5.0
+  iter: 1
+
+- command: focus_auto
+  range_start: 35500
+  range_end: 37500
+  step: 200
+  exptime: 5.0
+
+- command: observe_rd
+  target_name: "dusk_field1"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field2"
+  ra: "13:02:09.40"
+  dec: "-06:56:19.16"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field1"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field2"
+  ra: "13:02:09.40"
+  dec: "-06:56:19.16"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field1"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field2"
+  ra: "13:02:09.40"
+  dec: "-06:56:19.16"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field1"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field2"
+  ra: "13:02:09.40"
+  dec: "-06:56:19.16"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field1"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field2"
+  ra: "13:02:09.40"
+  dec: "-06:56:19.16"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field1"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field2"
+  ra: "13:02:09.40"
+  dec: "-06:56:19.16"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field1"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field2"
+  ra: "13:02:09.40"
+  dec: "-06:56:19.16"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field1"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field2"
+  ra: "13:02:09.40"
+  dec: "-06:56:19.16"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field1"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field2"
+  ra: "13:02:09.40"
+  dec: "-06:56:19.16"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field1"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field2"
+  ra: "13:02:09.40"
+  dec: "-06:56:19.16"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field1"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field2"
+  ra: "13:02:09.40"
+  dec: "-06:56:19.16"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field1"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field2"
+  ra: "13:02:09.40"
+  dec: "-06:56:19.16"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field1"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field2"
+  ra: "13:02:09.40"
+  dec: "-06:56:19.16"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field1"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field2"
+  ra: "13:02:09.40"
+  dec: "-06:56:19.16"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field1"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field2"
+  ra: "13:02:09.40"
+  dec: "-06:56:19.16"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field1"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field2"
+  ra: "13:02:09.40"
+  dec: "-06:56:19.16"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field1"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field2"
+  ra: "13:02:09.40"
+  dec: "-06:56:19.16"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field1"
+  ra: "10:44:27.33"
+  dec: "+08:02:23.4"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dusk_field2"
+  ra: "13:02:09.40"
+  dec: "-06:56:19.16"
+  exptime: 60.0
+  iter: 3
+
+- command: park
+
+####
+# Dawn side observations
+####
+- command: wait_until
+  ut: "09:30:00"
+
+# - command: sync_field
+#   target_name: "dawn"
+#   ra: "19:00:00"
+#   dec: "15:00:00"
+
+- command: observe_rd
+  target_name: "dawn_test"
+  ra: "21:40:22.04"
+  dec: "-10:36:42.0"
+  exptime: 5.0
+  iter: 1
+
+- command: focus_auto
+  range_start: 35500
+  range_end: 37500
+  step: 200
+  exptime: 5.0
+
+- command: observe_rd
+  target_name: "dawn_field1"
+  ra: "22:17:07.18"
+  dec: "-09:55:56.1"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field2"
+  ra: "21:40:22.04"
+  dec: "-10:36:42.0"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field1"
+  ra: "22:17:07.18"
+  dec: "-09:55:56.1"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field2"
+  ra: "21:40:22.04"
+  dec: "-10:36:42.0"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field1"
+  ra: "22:17:07.18"
+  dec: "-09:55:56.1"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field2"
+  ra: "21:40:22.04"
+  dec: "-10:36:42.0"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field1"
+  ra: "22:17:07.18"
+  dec: "-09:55:56.1"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field2"
+  ra: "21:40:22.04"
+  dec: "-10:36:42.0"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field1"
+  ra: "22:17:07.18"
+  dec: "-09:55:56.1"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field2"
+  ra: "21:40:22.04"
+  dec: "-10:36:42.0"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field1"
+  ra: "22:17:07.18"
+  dec: "-09:55:56.1"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field2"
+  ra: "21:40:22.04"
+  dec: "-10:36:42.0"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field1"
+  ra: "22:17:07.18"
+  dec: "-09:55:56.1"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field2"
+  ra: "21:40:22.04"
+  dec: "-10:36:42.0"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field1"
+  ra: "22:17:07.18"
+  dec: "-09:55:56.1"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field2"
+  ra: "21:40:22.04"
+  dec: "-10:36:42.0"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field1"
+  ra: "22:17:07.18"
+  dec: "-09:55:56.1"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field2"
+  ra: "21:40:22.04"
+  dec: "-10:36:42.0"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field1"
+  ra: "22:17:07.18"
+  dec: "-09:55:56.1"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field2"
+  ra: "21:40:22.04"
+  dec: "-10:36:42.0"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field1"
+  ra: "22:17:07.18"
+  dec: "-09:55:56.1"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field2"
+  ra: "21:40:22.04"
+  dec: "-10:36:42.0"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field1"
+  ra: "22:17:07.18"
+  dec: "-09:55:56.1"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field2"
+  ra: "21:40:22.04"
+  dec: "-10:36:42.0"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field1"
+  ra: "22:17:07.18"
+  dec: "-09:55:56.1"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field2"
+  ra: "21:40:22.04"
+  dec: "-10:36:42.0"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field1"
+  ra: "22:17:07.18"
+  dec: "-09:55:56.1"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field2"
+  ra: "21:40:22.04"
+  dec: "-10:36:42.0"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field1"
+  ra: "22:17:07.18"
+  dec: "-09:55:56.1"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field2"
+  ra: "21:40:22.04"
+  dec: "-10:36:42.0"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field1"
+  ra: "22:17:07.18"
+  dec: "-09:55:56.1"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field2"
+  ra: "21:40:22.04"
+  dec: "-10:36:42.0"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field1"
+  ra: "22:17:07.18"
+  dec: "-09:55:56.1"
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: "dawn_field2"
+  ra: "21:40:22.04"
+  dec: "-10:36:42.0"
+  exptime: 60.0
+  iter: 3
+
+- command: park
+
+####
+# Calibration frames
+####
+- command: dark
+  exptime: 60.0
+  iter: 9
+
+- command: bias
+  iter: 9
+
+# Cooler off and kill the server
+- command: end_sequence

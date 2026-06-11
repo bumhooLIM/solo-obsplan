@@ -1,4 +1,4 @@
-# --- TOP IMPORTS (Notice photutils is completely gone) ---
+# --- TOP IMPORTS ---
 import sys
 import argparse
 import warnings
@@ -29,6 +29,7 @@ from logger import obs_logger
 # STANDALONE PSF ANALYZER (Replaces solopy.soloPSF)
 # ======================================================================
 class StandalonePSF:
+    
     def __init__(self, init_fwhm=2.5, n_star=20, peakmin=300, peakmax=3000,
                  max_ab_ratio=2.0, max_deviation=3.0, base_tile_size=500):
         self.init_fwhm = init_fwhm
