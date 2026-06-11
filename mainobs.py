@@ -405,6 +405,19 @@ def execute_yaml_plan(yaml_file):
                 except Exception as e:
                     obs_logger.error(f"Failed to execute calibration frames: {e}")
 
+            elif command == "compress_data":
+                obs_logger.info(f"--> [DATA COMPRESSION] Compressing FITS files in {daily_output_dir}...")
+                
+                compress_proc = subprocess.run([
+                    sys.executable, str(directory.SCRIPT_DIR / "compress_bz2.py"),
+                    "-d", str(daily_output_dir)
+                ])
+                
+                if compress_proc.returncode != 0:
+                    obs_logger.warning("Data compression encountered an error. Check logs for details.")
+                else:
+                    obs_logger.info("--> [DATA COMPRESSION] Complete.")
+
             # elif command == "confirm_end":
             #     obs_logger.info(f"\n[SYSTEM] Shutdown Complete. Successful Observations: {obs_completed}")
             #     break

@@ -488,3 +488,5 @@
   iter: 9
 
 - command: end_sequence
+
+- command: compress_data

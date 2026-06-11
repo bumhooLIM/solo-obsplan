@@ -146,6 +146,7 @@ def generate_daily_yaml(date_str, dusk_targets, dawn_targets, location, dusk_loo
     plan.append({'command': 'park'})  # 1. Park the mount first to stop tracking
     plan.extend(write_calibrations(dusk_targets, dawn_targets, num_darks=9, num_biases=9)) # 2. Shoot calibrations
     plan.append({'command': 'end_sequence'}) # 3. Warm up cooler & turn off servers
+    plan.append({'command': 'compress_data'}) # 4. Compress all data generated tonight (High CPU task)
     
     # --- 6. Formatted File Export ---
     filename = OBSPLAN_DIR / f"obsplan_{date_str.replace('-', '')}.yaml"
