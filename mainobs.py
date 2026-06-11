@@ -2,6 +2,7 @@ import os
 import sys
 import yaml
 import subprocess
+import argparse
 from datetime import datetime, timezone
 from astropy import units as u
 from time import sleep
@@ -433,4 +434,11 @@ def execute_yaml_plan(yaml_file):
         sleep(10)
 
 if __name__ == "__main__":
-    execute_yaml_plan(directory.PLAN_DIR / "obsplan_example.yaml")
+    parser = argparse.ArgumentParser(description="SOLO Robotic Observation Main Script")
+    parser.add_argument("-f", "--file", dest="plan_file", required=True, help="Name of the YAML plan file (e.g., obsplan_20260612.yaml)")
+    args = parser.parse_args()
+
+    # Automatically look for the file inside the PLAN_DIR
+    plan_path = directory.PLAN_DIR / args.plan_file
+
+    execute_yaml_plan(plan_path)
