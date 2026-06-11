@@ -15,17 +15,25 @@ try:
     with open(directory.INFO_DIR / "equipment.yaml", 'r') as file:
         eq_config = yaml.safe_load(file)
     
-    # Apply the Alpaca networking fix
     telescope_address = f"{eq_config['telescope']['ip']}:{eq_config['telescope']['port']}"
     telescope_device = eq_config['telescope']['device_number']
     T = Telescope(telescope_address, telescope_device)
+    
+    # 1. Connection Verification
+    if not getattr(T, 'Connected', False):
+        obs_logger.warning("Mount driver is not connected. Attempting to connect now...")
+        T.Connected = True
+        time.sleep(2.0)
+        if not getattr(T, 'Connected', False):
+            raise Exception("Telescope driver refused connection via ASCOM/Alpaca.")
+            
 except Exception as e:
     obs_logger.error(f"FAIL: Could not load configuration or connect to telescope ({e})")
     sys.exit(1)
 
 # --- Argparse Setting ---
 parser = argparse.ArgumentParser()
-parser.add_argument("-a", "--alt", dest="alt", type=float, required=True, help="Target Altitude in degrees (0 to 90)")
+parser.add_argument("-a", "--alt", dest="alt", type=float, required=True, help="Target Altitude in degrees (15 to 89)")
 parser.add_argument("-z", "--az", dest="az", type=float, required=True, help="Target Azimuth in degrees (0 to 360)")
 args = parser.parse_args()
 
@@ -34,45 +42,63 @@ def slew_altaz():
         alt = args.alt
         az = args.az
 
-        # --- 1. Basic Coordinate Validation ---
+        # --- 2. Advanced Coordinate Safety Validation ---
         if not (0.0 <= az <= 360.0):
             obs_logger.error(f"FAIL: Azimuth ({az}) is out of bounds. Must be 0 to 360.")
             sys.exit(1)
-        if not (-90.0 <= alt <= 90.0):
-            obs_logger.error(f"FAIL: Altitude ({alt}) is out of bounds. Must be -90 to 90.")
+            
+        # Hard altitude floor to prevent pier/wall collisions
+        if not (15.0 <= alt <= 88.0):
+            obs_logger.error(f"FAIL: Altitude ({alt:.1f}°) is unsafe. Must be between 15° and 88° to protect mount.")
+            sys.exit(1)
+            
+        # Protect against Meridian Flip confusion during Alt/Az slews
+        if 170.0 <= az <= 190.0:
+            obs_logger.error(f"FAIL: Target Azimuth ({az:.1f}°) crosses the Meridian. Alt/Az slewing aborted here to prevent mount flip errors.")
             sys.exit(1)
 
         obs_logger.info(f"Target Acquired -> ALT: {alt:.2f}° | AZ: {az:.2f}°")
 
-        # --- 2. Hardware Prep & Sync Buffers ---
+        # --- 3. Hardware Prep & Sync Buffers ---
         if getattr(T, 'AtPark', False):
             obs_logger.info("Mount is parked. Unparking before Alt/Az slew...")
             T.Unpark()
             
-            # Wait for physical unpark
             while getattr(T, 'AtPark', True):
                 time.sleep(1)
                 
-            # Hardware-to-software sync buffer (Fixes the HUBO-i "Ghost Slew" bug)
             obs_logger.info("Unpark complete. Waiting for HUBO-i driver state to sync...")
             time.sleep(3.0) 
 
-        # ASCOM Standard: Tracking MUST be OFF to hold a static Alt/Az coordinate
+        # --- 4. Safely Disengage Tracking ---
         if getattr(T, 'Tracking', True):
             obs_logger.info("Disabling stellar tracking for static Alt/Az slew...")
             T.Tracking = False
-            time.sleep(2.0) # Buffer to let the driver apply the tracking change
+            time.sleep(2.0)
+            
+            # Verification check
+            if getattr(T, 'Tracking', True):
+                obs_logger.warning("Tracking failed to disengage! Attempting secondary override...")
+                T.Tracking = False
+                time.sleep(2.0)
+                
+            if getattr(T, 'Tracking', True):
+                obs_logger.error("FATAL: Mount refuses to turn off tracking. Aborting Alt/Az slew.")
+                sys.exit(1)
+            else:
+                obs_logger.info("SUCCESS: Tracking is OFF.")
 
-        # --- 3. Asynchronous Slew & Polling Loop ---
+        # --- 5. Driver Capability Check ---
+        if not getattr(T, 'CanSlewAltAz', False):
+            obs_logger.warning("Driver reports CanSlewAltAz is False. The command may be rejected by the ASCOM driver.")
+
+        # --- 6. Asynchronous Slew & Polling Loop ---
         obs_logger.info("Slewing initiated. Waiting for mount to arrive...")
-        
-        # NOTE: ASCOM signature requires (Azimuth, Altitude) in that specific order!
         T.SlewToAltAzAsync(az, alt)
         
-        # Buffer to let the ASCOM driver register the moving state
         time.sleep(3.0) 
         
-        timeout = 180 # 3 minutes max slew time
+        timeout = 180 
         start_time = time.time()
         
         while getattr(T, 'Slewing', False):

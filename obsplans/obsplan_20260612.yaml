@@ -1,16 +1,19 @@
 - command: wait_until
-  ut: 04:13:00
+  ut: 03:42:00
 
 - command: check_observatory
 
 - command: start_sequence
   cooler_temp: -5.0
 
+- command: wait_until
+  ut: 04:13:00
+
 - command: focus_auto
   alt: 45.0
   az: 230.0
-  range_start: 35500
-  range_end: 37500
+  range_start: 37500
+  range_end: 35500
   step: 200
   exptime: 5.0
 
@@ -239,7 +242,7 @@
   iter: 3
 
 - command: wait_until
-  ut: 08:41:00
+  ut: 08:37:00
 
 - command: check_observatory
 
@@ -475,7 +478,7 @@
   exptime: 60.0
   iter: 3
 
-- command: end_sequence
+- command: park
 
 - command: bias
   iter: 9
@@ -483,3 +486,5 @@
 - command: dark
   exptime: 60.0
   iter: 9
+
+- command: end_sequence

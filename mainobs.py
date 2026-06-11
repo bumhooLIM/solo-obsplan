@@ -153,7 +153,7 @@ def execute_yaml_plan(yaml_file):
                     current_alt, current_az = util.equatorial2horizon(ra, dec, latitude=OBS_LAT*u.deg, longitude=OBS_LON*u.deg, height=OBS_ELEV*u.m, t="now")
                     
                     # If target is too low OR crossing the meridian
-                    if current_alt <= 15.0 or (170.0 <= current_az <= 190.0):
+                    if current_alt <= 20.0 or (170.0 <= current_az <= 190.0):
                         obs_logger.warning(f"Target {name} is unsafe! (Alt: {current_alt:.1f}°, Az: {current_az:.1f}°).")
                         obs_logger.info("Instantly skipping to the next target field...")
                         continue
@@ -256,8 +256,40 @@ def execute_yaml_plan(yaml_file):
                 
                 f_start = int(step.get('range_start', 35500))
                 f_end = int(step.get('range_end', 37500))
-                f_step = int(step.get('step', 200))
+                raw_step = abs(int(step.get('step', 200)))
+                # Auto-detect direction (Inward/Minus vs Outward/Plus)
+                if f_start > f_end:
+                    f_step = -raw_step
+                else:
+                    f_step = raw_step
                 exptime = float(step.get('exptime', 5.0))
+                
+                # --- 0. Slew to Autofocus Target & Settle ---
+                # Pull alt/az from the obsplan step. Defaults to Alt 70°, Az 270° (West) to avoid the meridian.
+                focus_alt = float(step.get('alt', 45.0))
+                focus_az = float(step.get('az', 270.0))
+                
+                obs_logger.info(f"Slewing to Autofocus field -> ALT: {focus_alt}° | AZ: {focus_az}°")
+                slew_proc = subprocess.run([
+                    sys.executable, str(directory.SCRIPT_DIR / "goto_aa.py"),
+                    "-a", str(focus_alt), "-z", str(focus_az)
+                ])
+                
+                if slew_proc.returncode != 0:
+                    obs_logger.error("FAIL: Mount failed to reach autofocus field. Aborting autofocus sequence.")
+                    continue
+
+                # Turn on tracking
+                track_proc = subprocess.run([
+                    sys.executable, str(directory.SCRIPT_DIR / "tracking.py"),
+                    "-t", "on"
+                ])
+                
+                if track_proc.returncode != 0:
+                    obs_logger.error("FAIL: tracking.py failed to engage tracking. Aborting autofocus sequence.")
+                    continue
+                    
+                sleep(30.0) # wait for mount to settle and tracking to stabilize before starting the autofocus routine
                 
                 # --- 1. Prepare Temporary Focus Directory ---
                 focus_dir = directory.DATA_DIR / "focus_temp"
@@ -344,7 +376,7 @@ def execute_yaml_plan(yaml_file):
                 subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "focus.py"), "-f", str(dx)])
                 
                 obs_logger.info(f"--> [AUTOFOCUS SEQUENCE] Complete. Final Position Locked: {target_focus}")
-
+                
             elif command in ["dark", "bias"]: # Sets name to "Dark" or "Bias"
                 # Bias overrides exptime to 0.01; Dark pulls it from the YAML
                 

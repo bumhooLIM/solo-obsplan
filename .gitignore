@@ -20,7 +20,6 @@ dist/
 *.egg-info/
 
 RASA_CLI/
-obsplanner/
 
 *.parq
 obsplanner/
