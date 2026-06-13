@@ -417,11 +417,7 @@ def execute_yaml_plan(yaml_file):
                     obs_logger.warning("Data compression encountered an error. Check logs for details.")
                 else:
                     obs_logger.info("--> [DATA COMPRESSION] Complete.")
-
-            # elif command == "confirm_end":
-            #     obs_logger.info(f"\n[SYSTEM] Shutdown Complete. Successful Observations: {obs_completed}")
-            #     break
-
+                    
             else:
                 obs_logger.warning(f"Unknown command '{command}' in YAML. Skipping this step.")
 

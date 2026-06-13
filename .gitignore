@@ -22,4 +22,4 @@ dist/
 RASA_CLI/
 
 *.parq
-obsplanner/
+obsfields/
