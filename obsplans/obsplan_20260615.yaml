@@ -1,0 +1,2566 @@
+- command: wait_until
+  ut: 03:49:00
+
+- command: check_observatory
+
+- command: start_sequence
+  cooler_temp: -5.0
+
+- command: wait_until
+  ut: 04:28:00
+
+- command: focus_auto
+  alt: 45.0
+  az: 230.0
+  range_start: 36500
+  range_end: 35000
+  step: 200
+  exptime: 5.0
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field1
+  ra: '10:44:27.33'
+  dec: '+08:02:23.40'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field2
+  ra: '11:57:43.93'
+  dec: '+00:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field3
+  ra: '11:12:55.93'
+  dec: '+07:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field4
+  ra: '11:36:55.93'
+  dec: '-07:00:15.76'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field5
+  ra: '10:59:19.93'
+  dec: '+03:23:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dusk_field6
+  ra: '11:23:19.93'
+  dec: '+03:11:44.24'
+  exptime: 60.0
+  iter: 3
+
+- command: park
+
+- command: wait_until
+  ut: 09:00:00
+
+- command: check_observatory
+
+- command: focus_auto
+  alt: 45.0
+  az: 120.0
+  range_start: 36500
+  range_end: 38000
+  step: 200
+  exptime: 5.0
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field1
+  ra: '22:18:20.01'
+  dec: '-09:49:48.50'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field2
+  ra: '22:55:00.26'
+  dec: '-08:50:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field3
+  ra: '23:31:00.26'
+  dec: '+05:45:28.34'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field4
+  ra: '22:50:12.26'
+  dec: '-14:38:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field5
+  ra: '23:38:12.26'
+  dec: '-05:14:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: observe_rd
+  target_name: dawn_field6
+  ra: '23:53:24.26'
+  dec: '-05:26:31.66'
+  exptime: 60.0
+  iter: 3
+
+- command: park
+
+- command: bias
+  iter: 9
+
+- command: dark
+  exptime: 60.0
+  iter: 9
+
+- command: end_sequence
+
+- command: compress_data
