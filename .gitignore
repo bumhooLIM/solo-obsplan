@@ -23,3 +23,4 @@ RASA_CLI/
 
 *.parq
 obsfields/
+obsplan_20*.yaml
