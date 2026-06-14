@@ -22,14 +22,14 @@ def run_scheduler():
     exec_time = args.exec_time
     
     obsplan_dir = directory.PLAN_DIR
-    bat_file_path = directory.ROOT_DIR / "run_solo.bat"
+    bat_file_path = directory.WORK_DIR / "run_solo.bat"
     
     # 1. Ensure the batch file exists for Task Scheduler
     if not bat_file_path.exists():
         print(f"⚠️ Warning: run_solo.bat not found at {bat_file_path}. Creating it now...")
         with open(bat_file_path, "w") as f:
             f.write("@echo off\n")
-            f.write(f"cd {directory.ROOT_DIR}\n")
+            f.write(f"cd {directory.WORK_DIR}\n")
             f.write("python mainobs.py -f %1\n")
         print("✅ Created run_solo.bat")
 
