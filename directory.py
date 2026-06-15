@@ -3,6 +3,8 @@ from pathlib import Path
 # WORK_DIR is dynamically set to the folder containing this directory.py file (solo-obsplan)
 WORK_DIR = Path(__file__).resolve().parent
 
+ROOT_DIR = WORK_DIR
+
 # Directory paths for miscellaneous info.
 INFO_DIR = WORK_DIR / "_info"
 
