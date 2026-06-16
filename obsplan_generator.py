@@ -126,7 +126,7 @@ def generate_daily_yaml(date_str, dusk_targets, dawn_targets, location, dusk_loo
     # 1. Initialization & Dusk Prep
     plan.extend(write_start_sequence(time_init))
     plan.append({'command': 'wait_until', 'ut': time_dusk})
-    plan.extend(write_focus_auto(range_start=36500, range_end=35000, step=200, alt=45.0, az=230.0, exptime=5.0))
+    plan.extend(write_focus_auto(range_start=36500, range_end=35000, step=200, alt=45.0, az=230.0, exptime=10.0))
     
     # 2. Dusk Target Loop
     plan.extend(write_observe_loop(dusk_targets, num_loops=dusk_loops))
@@ -137,7 +137,7 @@ def generate_daily_yaml(date_str, dusk_targets, dawn_targets, location, dusk_loo
     plan.append({'command': 'check_observatory'})
     
     # Re-focus before dawn loop
-    plan.extend(write_focus_auto(range_start=36500, range_end=38000, step=200, alt=45.0, az=120.0, exptime=5.0))
+    plan.extend(write_focus_auto(range_start=37500, range_end=36000, step=200, alt=45.0, az=120.0, exptime=10.0))
     
     # 4. Dawn Target Loop
     plan.extend(write_observe_loop(dawn_targets, num_loops=dawn_loops))
