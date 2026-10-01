@@ -73,11 +73,35 @@ def write_observe_loop(targets, num_loops):
 
 # --- 3. DYNAMIC TIME & VISIBILITY CALCULATOR ---
 
-def calculate_wait_times(date_str, location, dawn_targets):
+# Pointing limits applied at run time by mainobs.py / goto_rd.py
+OBS_ALT_MIN_DEG = 20.0             # Targets at or below this altitude are skipped
+MERIDIAN_AZ_DEG = (170.0, 190.0)   # Azimuth band skipped to avoid meridian-flip trouble
+
+def first_observable_time(targets, times, location, time_mask):
     """
-    Calculates the exact UT time for Dusk (Sun < -10 deg) and Dawn.
-    Dawn wait considers ALL dawn targets and fits to the earliest 
-    time ANY of them crosses 20 deg in the morning.
+    Returns the first time in times[time_mask] when ANY target is observable by mainobs.py's rules
+    (Alt > 20 deg and Az outside the 170-190 deg meridian zone), or None if none ever is.
+    """
+    observable = np.zeros(len(times), dtype=bool)
+    for t in targets:
+        target = SkyCoord(t['ra'], t['dec'], unit=(u.hourangle, u.deg))
+        target_altaz = target.transform_to(AltAz(obstime=times, location=location))
+
+        in_meridian = (target_altaz.az.deg >= MERIDIAN_AZ_DEG[0]) & (target_altaz.az.deg <= MERIDIAN_AZ_DEG[1])
+        observable |= (target_altaz.alt.deg > OBS_ALT_MIN_DEG) & ~in_meridian
+
+    valid_mask = time_mask & observable
+    return times[valid_mask][0] if np.any(valid_mask) else None
+
+def calculate_wait_times(date_str, location, dusk_targets, dawn_targets):
+    """
+    Calculates the UT wait times of the night:
+    - init:     Sun < -6 deg (start-up sequence)
+    - dusk:     Sun < -12 deg (dusk autofocus)
+    - dusk_obs: first time after dusk when ANY dusk target is observable, rounded up to the minute.
+                Dusk fields often sit in the meridian zone right after dusk, where mainobs.py skips them.
+                None if a dusk target is already observable at dusk (or none ever is).
+    - dawn:     earliest time in the morning (Sun < -12 deg) when ANY dawn target is observable.
     """
     # Create an array of times for the next 24 hours at 12-second resolution
     t0 = Time(date_str + " 00:00:00") 
@@ -93,34 +117,31 @@ def calculate_wait_times(date_str, location, dawn_targets):
     mask_dusk = sun_altaz.alt.deg < -12.0
     time_dusk = times[mask_dusk][0]
     
-    # 3. Earliest Dawn time when ANY target is above 20 deg in the morning (after solar midnight)
+    # 3. Dusk observing start: first time after dusk when ANY dusk target clears the pointing limits
+    after_dusk_mask = (np.arange(len(times)) >= np.argmax(mask_dusk)) & mask_dusk
+    time_dusk_obs = first_observable_time(dusk_targets, times, location, after_dusk_mask)
+    if time_dusk_obs is not None and time_dusk_obs > time_dusk:
+        dusk_obs_str = (time_dusk_obs + 1 * u.min).strftime("%H:%M:00") # Round up so the wait never ends early
+    else:
+        dusk_obs_str = None # Already observable at dusk (or never): no extra wait
+    
+    # 4. Earliest Dawn time when ANY target is observable in the morning (after solar midnight)
     solar_midnight_idx = np.argmin(sun_altaz.alt.deg)
     morning_mask = np.arange(len(times)) >= solar_midnight_idx
+    morning_night_mask = morning_mask & (sun_altaz.alt.deg < -12.0)
     
-    dawn_start_times = []
-    for t in dawn_targets:
-        target = SkyCoord(t['ra'], t['dec'], unit=(u.hourangle, u.deg))
-        target_altaz = target.transform_to(AltAz(obstime=times, location=location))
-        
-        valid_mask = morning_mask & (sun_altaz.alt.deg < -12.0) & (target_altaz.alt.deg > 20.0)
-        
-        if np.any(valid_mask):
-            dawn_start_times.append(times[valid_mask][0])
-            
-    if dawn_start_times:
-        time_dawn = min(dawn_start_times)
-    else:
-        morning_night_mask = morning_mask & (sun_altaz.alt.deg < -12.0)
+    time_dawn = first_observable_time(dawn_targets, times, location, morning_night_mask)
+    if time_dawn is None:
         time_dawn = times[morning_night_mask][-1]
     
-    return time_init.strftime("%H:%M:00"), time_dusk.strftime("%H:%M:00"), time_dawn.strftime("%H:%M:00")
+    return time_init.strftime("%H:%M:00"), time_dusk.strftime("%H:%M:00"), dusk_obs_str, time_dawn.strftime("%H:%M:00")
 
 # --- 4. MASTER COMPILER ---
 
 def generate_daily_yaml(date_str, out_dir, dusk_targets, dawn_targets, location, dusk_loops=16, dawn_loops=16):
     """Compiles all blocks together and exports the final obsplan.yaml"""
     
-    time_init, time_dusk, time_dawn = calculate_wait_times(date_str, location, dawn_targets)
+    time_init, time_dusk, time_dusk_obs, time_dawn = calculate_wait_times(date_str, location, dusk_targets, dawn_targets)
     
     plan = []
     
@@ -129,6 +150,12 @@ def generate_daily_yaml(date_str, out_dir, dusk_targets, dawn_targets, location,
     plan.append({'command': 'wait_until', 'ut': time_dusk})
     if dusk_targets:
         plan.extend(write_focus_auto(range_start=19500, range_end=16500, step=500, alt=45.0, az=270.0, exptime=10.0))
+        
+        # Dusk fields often transit right after dusk (inside the meridian zone that mainobs.py skips).
+        # Park and wait until the first one clears instead of starting the loop too early.
+        if time_dusk_obs:
+            plan.append({'command': 'park'})
+            plan.append({'command': 'wait_until', 'ut': time_dusk_obs})
     
     # 2. Dusk Target Loop
     plan.extend(write_observe_loop(dusk_targets, num_loops=dusk_loops))
@@ -164,6 +191,8 @@ def generate_daily_yaml(date_str, out_dir, dusk_targets, dawn_targets, location,
     print(f"✅ Successfully generated {filename}")
     print(f"   -> Observation start: {time_init}")
     print(f"   -> Dusk start: {time_dusk}")
+    if time_dusk_obs:
+        print(f"   -> Dusk observing start: {time_dusk_obs} (after the meridian wait)")
     print(f"   -> Dawn start: {time_dawn}")
 
 def generate_obs_dictionaries(fpath_csv):

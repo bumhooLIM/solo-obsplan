@@ -5,6 +5,8 @@ import subprocess
 import argparse
 from datetime import datetime, timezone
 from astropy import units as u
+from astropy.time import Time
+from astropy.coordinates import EarthLocation, AltAz, get_sun
 from time import sleep
 
 # --- Direct Imports from Root ---
@@ -36,6 +38,86 @@ date_str = ut_now.strftime('%Y_%m%d') # YYYY_MMDD format for daily folders
 daily_output_dir = directory.DATA_DIR / date_str
 daily_output_dir.mkdir(parents=True, exist_ok=True)
 
+# --- Pointing Limits (same values as _subscripts/goto_rd.py) ---
+ALT_LIMIT_DEG = 20.0               # Targets at or below this altitude are skipped
+MERIDIAN_AZ_DEG = (170.0, 190.0)   # Azimuth band skipped to avoid meridian-flip trouble
+DAWN_SUN_ALT_DEG = -10.0           # Sun above this altitude = dawn (goto_rd.py exit code 22)
+
+# --- Meridian Wait Settings (see observe_rd) ---
+MERIDIAN_WAIT_MAX_MIN = 120        # Give up waiting for a field to clear the meridian after this
+MERIDIAN_WAIT_POLL_SEC = 60        # Re-check interval while waiting
+MERIDIAN_WAIT_HEARTBEAT_MIN = 10   # Status log interval while waiting
+
+def pointing_status(ra, dec):
+    """Returns ('ok' | 'low' | 'meridian', alt, az) for a target at the current time."""
+    alt, az = util.equatorial2horizon(ra, dec, latitude=OBS_LAT*u.deg, longitude=OBS_LON*u.deg, height=OBS_ELEV*u.m, t="now")
+    if alt <= ALT_LIMIT_DEG:
+        return "low", alt, az
+    if MERIDIAN_AZ_DEG[0] <= az <= MERIDIAN_AZ_DEG[1]:
+        return "meridian", alt, az
+    return "ok", alt, az
+
+def sun_altitude_now():
+    """Returns the current altitude of the Sun in degrees."""
+    loc = EarthLocation(lat=OBS_LAT*u.deg, lon=OBS_LON*u.deg, height=OBS_ELEV*u.m)
+    now = Time.now()
+    return get_sun(now).transform_to(AltAz(obstime=now, location=loc)).alt.deg
+
+def observe_block(plan, start_idx):
+    """
+    Returns the unique fields [(name, ra, dec), ...] of the run of consecutive observe_rd steps
+    starting at plan[start_idx], and the plan index right after that run.
+    """
+    fields = {}
+    end_idx = start_idx
+    while end_idx < len(plan) and str(plan[end_idx].get('command', '')).lower() == "observe_rd":
+        block_step = plan[end_idx]
+        fields.setdefault((str(block_step.get('ra')), str(block_step.get('dec'))), block_step.get('target_name', 'unknown_target'))
+        end_idx += 1
+    return [(name, ra, dec) for (ra, dec), name in fields.items()], end_idx
+
+def wait_for_meridian_clear(fields):
+    """
+    Parks the mount and waits until any field of the block becomes observable.
+    Returns 'ready', 'set' (every field dropped below the altitude limit), 'dawn' or 'timeout'.
+    """
+    obs_logger.info(f"--> [MERIDIAN WAIT] No field in this block is observable, but some are only blocked by the meridian zone (Az {MERIDIAN_AZ_DEG[0]:.0f}-{MERIDIAN_AZ_DEG[1]:.0f}°). Parking and waiting (max {MERIDIAN_WAIT_MAX_MIN} min)...")
+
+    # Secure the mount while waiting (goto_rd.py unparks it before the next slew)
+    subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "tracking.py"), "-t", "off"])
+    subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "parking.py"), "-p", "park"])
+
+    t_start = Time.now()
+    t_heartbeat = t_start
+
+    while True:
+        statuses = [(name, *pointing_status(ra, dec)) for name, ra, dec in fields]
+        waited_min = (Time.now() - t_start).to(u.min).value
+
+        for name, status, alt, az in statuses:
+            if status == "ok":
+                obs_logger.info(f"--> [MERIDIAN WAIT] {name} is now observable (Alt: {alt:.1f}°, Az: {az:.1f}°) after {waited_min:.0f} min. Resuming.")
+                return "ready"
+
+        if not any(status == "meridian" for _, status, _, _ in statuses):
+            obs_logger.warning("[MERIDIAN WAIT] Every field dropped below the altitude limit while waiting. Ending this block.")
+            return "set"
+
+        if sun_altitude_now() > DAWN_SUN_ALT_DEG:
+            obs_logger.error("[MERIDIAN WAIT] Dawn detected while waiting. Skipping all remaining targets.")
+            return "dawn"
+
+        if waited_min >= MERIDIAN_WAIT_MAX_MIN:
+            obs_logger.warning(f"[MERIDIAN WAIT] TIMEOUT after {waited_min:.0f} min. Falling back to skipping this block's fields.")
+            return "timeout"
+
+        if (Time.now() - t_heartbeat).to(u.min).value >= MERIDIAN_WAIT_HEARTBEAT_MIN:
+            positions = ", ".join(f"{name} Az {az:.1f}°" for name, _, _, az in statuses)
+            obs_logger.info(f"Status: Still waiting for the meridian to clear ({waited_min:.0f} min elapsed; {positions}).")
+            t_heartbeat = Time.now()
+
+        sleep(MERIDIAN_WAIT_POLL_SEC)
+
 # --- Main Function to Execute YAML Plan ---
 def execute_yaml_plan(yaml_file):
     
@@ -56,6 +138,7 @@ def execute_yaml_plan(yaml_file):
 
         obs_completed = 0 
         skip_remaining_targets = False
+        meridian_wait_off_until = 0 # Plan index before which the meridian wait is disabled (after a timeout)
 
         for step_num, step in enumerate(plan, 1):
             
@@ -151,10 +234,29 @@ def execute_yaml_plan(yaml_file):
                 
                 # --- The "Instant Skip" Safety Block ---
                 try:
-                    current_alt, current_az = util.equatorial2horizon(ra, dec, latitude=OBS_LAT*u.deg, longitude=OBS_LON*u.deg, height=OBS_ELEV*u.m, t="now")
+                    status, current_alt, current_az = pointing_status(ra, dec)
+                    
+                    # --- Meridian Wait ---
+                    # Skips are instant and the loop is a fixed list of steps, so if no field of this block is
+                    # observable the whole loop drains in minutes. Dusk fields typically sit in the meridian zone
+                    # right after dusk: if that is the only obstacle, wait for the first field to clear it.
+                    if status != "ok" and (step_num - 1) >= meridian_wait_off_until:
+                        block_fields, block_end = observe_block(plan, step_num - 1)
+                        block_status = [pointing_status(f_ra, f_dec)[0] for _, f_ra, f_dec in block_fields]
+                        
+                        if "ok" not in block_status and "meridian" in block_status:
+                            wait_result = wait_for_meridian_clear(block_fields)
+                            
+                            if wait_result == "dawn":
+                                skip_remaining_targets = True
+                                continue
+                            if wait_result == "timeout":
+                                meridian_wait_off_until = block_end # Don't wait again within this block
+                            
+                            status, current_alt, current_az = pointing_status(ra, dec)
                     
                     # If target is too low OR crossing the meridian
-                    if current_alt <= 20.0 or (170.0 <= current_az <= 190.0):
+                    if status != "ok":
                         obs_logger.warning(f"Target {name} is unsafe! (Alt: {current_alt:.1f}°, Az: {current_az:.1f}°).")
                         obs_logger.info("Instantly skipping to the next target field...")
                         continue
