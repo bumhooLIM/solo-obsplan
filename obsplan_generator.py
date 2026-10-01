@@ -14,7 +14,7 @@ def write_start_sequence(dusk_wait_ut):
     return [
         {'command': 'wait_until', 'ut': dusk_wait_ut},
         {'command': 'check_observatory'},
-        {'command': 'start_sequence', 'cooler_temp': -5.0}
+        {'command': 'start_sequence', 'cooler_temp': -10.0}
     ]
 
 def write_focus_auto(range_start, range_end, step, alt, az, exptime=5.0):
@@ -128,7 +128,7 @@ def generate_daily_yaml(date_str, out_dir, dusk_targets, dawn_targets, location,
     plan.extend(write_start_sequence(time_init))
     plan.append({'command': 'wait_until', 'ut': time_dusk})
     if dusk_targets:
-        plan.extend(write_focus_auto(range_start=36000, range_end=34500, step=200, alt=45.0, az=230.0, exptime=10.0))
+        plan.extend(write_focus_auto(range_start=19500, range_end=16500, step=500, alt=45.0, az=270.0, exptime=10.0))
     
     # 2. Dusk Target Loop
     plan.extend(write_observe_loop(dusk_targets, num_loops=dusk_loops))
@@ -140,7 +140,7 @@ def generate_daily_yaml(date_str, out_dir, dusk_targets, dawn_targets, location,
     
     # Re-focus before dawn loop
     if dawn_targets:
-        plan.extend(write_focus_auto(range_start=36500, range_end=35000, step=200, alt=45.0, az=120.0, exptime=10.0))
+        plan.extend(write_focus_auto(range_start=19500, range_end=16500, step=500, alt=45.0, az=120.0, exptime=10.0))
     
     # 4. Dawn Target Loop
     plan.extend(write_observe_loop(dawn_targets, num_loops=dawn_loops))
@@ -213,11 +213,11 @@ def generate_obs_dictionaries(fpath_csv):
 # ==========================================
 if __name__ == "__main__":
     # Define your observatory location
-    start_obsdate = "2026-08-21"
-    end_obsdate = "2026-09-06"
+    start_obsdate = "2026-10-02"
+    end_obsdate = "2026-10-16"
     for obsdate in pd.date_range(start=start_obsdate, end=end_obsdate):
         obsdate = obsdate.strftime("%Y-%m-%d")
-        refdate = "2026-08-27" # reference folder for the obsfields results
+        refdate = "2026-10-08" # reference folder for the obsfields results
 
         yyyymmdd = datetime.strptime(obsdate, "%Y-%m-%d").strftime("%Y%m%d")
         yyyy_mm = datetime.strptime(obsdate, "%Y-%m-%d").strftime("%Y_%m")
