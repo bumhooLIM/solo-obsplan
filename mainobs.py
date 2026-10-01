@@ -42,16 +42,17 @@ daily_output_dir.mkdir(parents=True, exist_ok=True)
 ALT_LIMIT_DEG = 20.0               # Targets at or below this altitude are skipped
 MERIDIAN_AZ_DEG = (170.0, 190.0)   # Azimuth band skipped to avoid meridian-flip trouble
 DAWN_SUN_ALT_DEG = -10.0           # Sun above this altitude = dawn (goto_rd.py exit code 22)
+TARGET_ALT_LIMIT_DEG = 15.0        # Default altitude limit for observe_target (targeted observations only)
 
 # --- Meridian Wait Settings (see observe_rd) ---
 MERIDIAN_WAIT_MAX_MIN = 120        # Give up waiting for a field to clear the meridian after this
 MERIDIAN_WAIT_POLL_SEC = 60        # Re-check interval while waiting
 MERIDIAN_WAIT_HEARTBEAT_MIN = 10   # Status log interval while waiting
 
-def pointing_status(ra, dec):
+def pointing_status(ra, dec, alt_limit=ALT_LIMIT_DEG):
     """Returns ('ok' | 'low' | 'meridian', alt, az) for a target at the current time."""
     alt, az = util.equatorial2horizon(ra, dec, latitude=OBS_LAT*u.deg, longitude=OBS_LON*u.deg, height=OBS_ELEV*u.m, t="now")
-    if alt <= ALT_LIMIT_DEG:
+    if alt <= alt_limit:
         return "low", alt, az
     if MERIDIAN_AZ_DEG[0] <= az <= MERIDIAN_AZ_DEG[1]:
         return "meridian", alt, az
@@ -300,6 +301,65 @@ def execute_yaml_plan(yaml_file):
                 else:
                     obs_logger.warning(f"Slew failed for {name}. Instantly skipping to next target field...")
                     continue # Only skips this specific target if it was a standard mechanical error
+
+            elif command == "observe_target":
+                # --- Targeted Observation: one long sequence on a fixed pointing (e.g. a specific asteroid) ---
+                # Uses its own altitude limit (alt_limit, default 15 deg) instead of the survey's 20 deg.
+                # exposure.py stops the frames once the pointing drops to alt_limit or the roof closes,
+                # so 'iter' is only an upper bound.
+                name = step.get('target_name', 'unknown_target')
+
+                if skip_remaining_targets:
+                    obs_logger.info(f"Skipping {name} due to prior weather/dawn abort.")
+                    continue
+
+                ra = str(step.get('ra'))
+                dec = str(step.get('dec'))
+                exptime = float(step.get('exptime', 10.0))
+                iterations = int(step.get('iter', 1))
+                xbin = int(step.get('xbin', 1))
+                ybin = int(step.get('ybin', 1))
+                alt_limit = float(step.get('alt_limit', TARGET_ALT_LIMIT_DEG))
+
+                obs_logger.info(f"--> [TARGETED] Checking observability for {name} (RA: {ra}, DEC: {dec}, Alt limit: {alt_limit:.0f}°)")
+
+                try:
+                    status, current_alt, current_az = pointing_status(ra, dec, alt_limit=alt_limit)
+                    if status != "ok":
+                        obs_logger.warning(f"Target {name} is unsafe! (Alt: {current_alt:.1f}°, Az: {current_az:.1f}°). Skipping targeted observation.")
+                        continue
+                except Exception as e:
+                    obs_logger.error(f"Observability check failed: {e}. Skipping targeted observation.")
+                    continue
+
+                obs_logger.info(f"--> Slewing to {name}")
+                slew_proc = subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "goto_rd.py"), f"--ra={ra}", f"--dec={dec}", f"--min_alt={alt_limit}"])
+
+                if slew_proc.returncode == 0:
+                    sleep(60) # Give the mount a moment to settle after slewing before starting exposures
+                    obs_logger.info(f"--> Starting targeted exposures for {name} (up to {iterations}x {exptime}s, until Alt <= {alt_limit:.0f}°)")
+                    subprocess.run([
+                        sys.executable, str(directory.SCRIPT_DIR / "exposure.py"),
+                        "-n", name,
+                        "-t", f"{exptime:.2f}",
+                        "-i", str(iterations),
+                        "-x", str(xbin),
+                        "-y", str(ybin),
+                        "--output_dir", str(daily_output_dir),
+                        f"--min_alt={alt_limit}", f"--ra={ra}", f"--dec={dec}"
+                    ])
+                    obs_completed += 1
+
+                elif slew_proc.returncode == 22:
+                    obs_logger.error("[FATAL] Dawn detected by slew module. Skipping all remaining targets.")
+                    skip_remaining_targets = True
+
+                elif slew_proc.returncode == 23:
+                    obs_logger.error(f"[FATAL] Global weather timeout reached during {name}. Skipping all remaining targets.")
+                    skip_remaining_targets = True
+
+                else:
+                    obs_logger.warning(f"Slew failed for {name}. Skipping targeted observation.")
 
             # elif command == "sync_field":
             #     name = step.get('target_name', 'Sync_Target')

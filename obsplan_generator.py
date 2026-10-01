@@ -71,6 +71,45 @@ def write_observe_loop(targets, num_loops):
             blocks.append(block)
     return blocks
 
+# --- 2b. TARGETED OBSERVATION (single pointing, altitude-limited) ---
+
+def write_targeted_obs(date_str, location, t_start_str, target):
+    """
+    Generates an observe_target block for one night: a long sequence on a single pointing, from
+    t_start until the target drops to target['alt_limit']. The pointing is the target's astrometric
+    (RA, Dec) from JPL Horizons at the middle of that window, so the target stays centred on average.
+    Returns (blocks, window_end_ut), or ([], None) if the target is not above the limit at t_start.
+    """
+    from astroquery.jplhorizons import Horizons # Only needed when targeted observations are configured
+
+    t_start = Time(f"{date_str} {t_start_str}")
+    eph = Horizons(
+        id=target['horizons_id'], id_type='smallbody', location=target.get('site', 'U69'),
+        epochs={'start': t_start.strftime("%Y-%m-%d %H:%M"), 'stop': (t_start + 12 * u.hour).strftime("%Y-%m-%d %H:%M"), 'step': '2m'}
+    ).ephemerides(quantities='1,4')
+
+    times = Time(np.asarray(eph['datetime_jd']), format='jd')
+    above = np.asarray(eph['EL']) > target['alt_limit']
+    if not above[0]:
+        print(f"   ⚠️ {target['name']} is not above {target['alt_limit']} deg at {t_start_str} UT. No targeted observation tonight.")
+        return [], None
+
+    # The window ends when the target first drops to the altitude limit; point at its middle
+    i_end = int(np.argmin(above)) if not above.all() else len(times) - 1
+    i_mid = i_end // 2
+    center = SkyCoord(eph['RA'][i_mid], eph['DEC'][i_mid], unit=u.deg)
+
+    blocks = [{
+        'command': 'observe_target',
+        'target_name': target['name'],
+        'ra': str(center.ra.to_string(unit=u.hourangle, sep=':', precision=2, pad=True)),
+        'dec': str(center.dec.to_string(unit=u.deg, sep=':', precision=2, pad=True, alwayssign=True)),
+        'exptime': target['exptime'],
+        'iter': target['iter'],
+        'alt_limit': target['alt_limit']
+    }]
+    return blocks, times[i_end].strftime("%H:%M:00")
+
 # --- 3. DYNAMIC TIME & VISIBILITY CALCULATOR ---
 
 # Pointing limits applied at run time by mainobs.py / goto_rd.py
@@ -138,24 +177,37 @@ def calculate_wait_times(date_str, location, dusk_targets, dawn_targets):
 
 # --- 4. MASTER COMPILER ---
 
-def generate_daily_yaml(date_str, out_dir, dusk_targets, dawn_targets, location, dusk_loops=16, dawn_loops=16):
+def generate_daily_yaml(date_str, out_dir, dusk_targets, dawn_targets, location, dusk_loops=16, dawn_loops=16, targeted_obs=None):
     """Compiles all blocks together and exports the final obsplan.yaml"""
     
     time_init, time_dusk, time_dusk_obs, time_dawn = calculate_wait_times(date_str, location, dusk_targets, dawn_targets)
+    
+    # Targeted observations run back to back right after the dusk autofocus, each until its altitude limit
+    targeted_blocks, targeted_end, targeted_info = [], time_dusk, []
+    for target in (targeted_obs or []):
+        blocks, t_end = write_targeted_obs(date_str, location, targeted_end, target)
+        if blocks:
+            targeted_info.append(f"{target['name']} {targeted_end[:5]}-{t_end[:5]} UT (until Alt {target['alt_limit']:.0f} deg) at RA {blocks[0]['ra']} Dec {blocks[0]['dec']}")
+            targeted_blocks.extend(blocks)
+            targeted_end = t_end
     
     plan = []
     
     # 1. Initialization & Dusk Prep
     plan.extend(write_start_sequence(time_init))
     plan.append({'command': 'wait_until', 'ut': time_dusk})
-    if dusk_targets:
+    if dusk_targets or targeted_blocks:
         plan.extend(write_focus_auto(range_start=19500, range_end=16500, step=500, alt=45.0, az=270.0, exptime=10.0))
-        
-        # Dusk fields often transit right after dusk (inside the meridian zone that mainobs.py skips).
-        # Park and wait until the first one clears instead of starting the loop too early.
-        if time_dusk_obs:
-            plan.append({'command': 'park'})
-            plan.append({'command': 'wait_until', 'ut': time_dusk_obs})
+    
+    # 1b. Targeted Observations (after the dusk autofocus, before the dusk survey)
+    plan.extend(targeted_blocks)
+    
+    # Dusk fields often transit right after dusk (inside the meridian zone that mainobs.py skips).
+    # Park and wait until the first one clears instead of starting the loop too early
+    # (not needed when targeted observations already run past that time).
+    if dusk_targets and time_dusk_obs and targeted_end < time_dusk_obs:
+        plan.append({'command': 'park'})
+        plan.append({'command': 'wait_until', 'ut': time_dusk_obs})
     
     # 2. Dusk Target Loop
     plan.extend(write_observe_loop(dusk_targets, num_loops=dusk_loops))
@@ -174,8 +226,8 @@ def generate_daily_yaml(date_str, out_dir, dusk_targets, dawn_targets, location,
     
     # --- 5. Shutdown & Calibrations (UPDATED ORDER) ---
     plan.append({'command': 'park'})  # 1. Park the mount first to stop tracking
-    if dusk_targets or dawn_targets:
-        plan.extend(write_calibrations(dusk_targets, dawn_targets, num_darks=9, num_biases=9)) # 2. Shoot calibrations
+    if dusk_targets or dawn_targets or targeted_blocks:
+        plan.extend(write_calibrations(dusk_targets + targeted_blocks, dawn_targets, num_darks=9, num_biases=9)) # 2. Shoot calibrations (incl. darks for targeted exposure times)
     plan.append({'command': 'end_sequence'}) # 3. Warm up cooler & turn off servers
     plan.append({'command': 'compress_data'}) # 4. Compress all data generated tonight (High CPU task)
     
@@ -191,7 +243,9 @@ def generate_daily_yaml(date_str, out_dir, dusk_targets, dawn_targets, location,
     print(f"✅ Successfully generated {filename}")
     print(f"   -> Observation start: {time_init}")
     print(f"   -> Dusk start: {time_dusk}")
-    if time_dusk_obs:
+    for info in targeted_info:
+        print(f"   -> Targeted: {info}")
+    if dusk_targets and time_dusk_obs and targeted_end < time_dusk_obs:
         print(f"   -> Dusk observing start: {time_dusk_obs} (after the meridian wait)")
     print(f"   -> Dawn start: {time_dawn}")
 
@@ -244,6 +298,17 @@ if __name__ == "__main__":
     # Define your observatory location
     start_obsdate = "2026-10-02"
     end_obsdate = "2026-10-16"
+
+    # Targeted observations: right after the dusk autofocus and before the dusk survey, until the pointing
+    # drops to alt_limit (survey fields keep 20 deg). One pointing per night: the target's JPL Horizons
+    # position at the middle of that window. Needs internet access on the listed nights.
+    TARGETED_OBS = [
+        {'name': '3200_Phaethon', 'horizons_id': '3200', 'first_night': '2026-10-02', 'last_night': '2026-10-04',
+         'exptime': 10.0, 'iter': 1000, 'alt_limit': 15.0},
+        {'name': '3200_Phaethon', 'horizons_id': '3200', 'first_night': '2026-10-05', 'last_night': '2026-10-06',
+         'exptime': 10.0, 'iter': 1000, 'alt_limit': 20.0},
+    ]
+
     for obsdate in pd.date_range(start=start_obsdate, end=end_obsdate):
         obsdate = obsdate.strftime("%Y-%m-%d")
         refdate = "2026-10-08" # reference folder for the obsfields results
@@ -269,5 +334,6 @@ if __name__ == "__main__":
             dawn_targets=dawn_fields,
             location=SRO_LOC,
             dusk_loops=30, 
-            dawn_loops=30  
+            dawn_loops=30,
+            targeted_obs=[t for t in TARGETED_OBS if t['first_night'] <= obsdate <= t['last_night']]
         )

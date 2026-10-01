@@ -7,6 +7,7 @@ from pathlib import Path
 import numpy as np
 import astropy.io.fits as fits
 from astropy.time import Time
+from astropy import units as u
 
 from alpaca.camera import Camera
 from alpaca.telescope import Telescope
@@ -46,7 +47,21 @@ parser.add_argument("-x", "--xbin", type=int, default=1)
 parser.add_argument("-y", "--ybin", type=int, default=1)
 parser.add_argument("-m", "--mode", type=str, default="light", choices=["light", "dark", "bias"], help="Frame type")
 parser.add_argument("--output_dir", type=str, default=str(directory.DATA_DIR), help="Directory to save FITS files")
+parser.add_argument("--min_alt", type=float, default=None, help="Targeted observations: stop once the pointing drops to this altitude [deg] (needs --ra/--dec)")
+parser.add_argument("--ra", type=str, default=None, help="Pointing RA (HH:MM:SS) for --min_alt")
+parser.add_argument("--dec", type=str, default=None, help="Pointing Dec (DD:MM:SS) for --min_alt")
 args = parser.parse_args()
+
+# --- Targeted Sequence Stops (only with --min_alt) ---
+ROOF_CHECK_EVERY = 10 # Re-check the roof every N frames during a targeted sequence
+
+if args.min_alt is not None and (args.ra is None or args.dec is None):
+    obs_logger.error("FAIL: --min_alt needs --ra and --dec to compute the pointing altitude.")
+    sys.exit(1)
+
+OBS_LAT = util.degree2float(str(obs['observatory']['latitude']))
+OBS_LON = util.degree2float(str(obs['observatory']['longitude']))
+OBS_ELEV = float(obs['observatory'].get('elevation', 1400))
 
 def open_ds9(img_path):
     """Safely handles opening DS9."""
@@ -83,6 +98,24 @@ try:
     obs_logger.info(f"Starting Sequence: {args.name} | {exptime}s x {args.iter}")
 
     for i in range(args.iter):
+        # 0. Targeted sequences: stop once the pointing drops to --min_alt, or if the roof closes
+        if args.min_alt is not None:
+            try:
+                alt, _ = util.equatorial2horizon(args.ra, args.dec, latitude=OBS_LAT*u.deg, longitude=OBS_LON*u.deg, height=OBS_ELEV*u.m, t="now")
+            except Exception as e:
+                obs_logger.error(f"FAIL: Altitude check failed ({e}). Stopping {args.name} for safety after {i} frame(s).")
+                break
+
+            if alt <= args.min_alt:
+                obs_logger.info(f"Altitude limit reached for {args.name} (Alt: {alt:.1f}° <= {args.min_alt:.0f}°). Stopping sequence after {i} frame(s).")
+                break
+
+            if i > 0 and i % ROOF_CHECK_EVERY == 0:
+                roof_proc = subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "check_roof_status.py")], capture_output=True)
+                if roof_proc.returncode != 0:
+                    obs_logger.error(f"Roof is not OPEN. Stopping {args.name} after {i} frame(s).")
+                    break
+
         try:
             # 1. Check if camera is busy from a previous glitch (State 0 = Idle)
             # ASCOM CameraState enum: 0=Idle, 1=Waiting, 2=Exposing, 3=Reading, 4=Download, 5=Error

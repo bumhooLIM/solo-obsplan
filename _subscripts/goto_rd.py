@@ -42,6 +42,7 @@ except Exception as e:
 parser = argparse.ArgumentParser()
 parser.add_argument("-a", "--ra", dest="ra", required=True)
 parser.add_argument("-d", "--dec", dest="dec", required=True)
+parser.add_argument("--min_alt", dest="min_alt", type=float, default=20.0, help="Altitude limit in degrees (default 20 for survey fields; targeted observations pass their own)")
 args = parser.parse_args()
 
 def is_dawn(lat, lon, elev):
@@ -74,8 +75,8 @@ def slew_mount():
 
         # --- 2. Hardware Safety Check ---
         alt, az = util.equatorial2horizon(ra_hours, dec_deg, latitude=OBS_LAT, longitude=OBS_LON, t="now")
-        if alt <= 20.0:
-            obs_logger.error(f"FAIL: Target is too low (Alt: {alt:.1f}°). Slewing aborted to protect mount.")
+        if alt <= args.min_alt:
+            obs_logger.error(f"FAIL: Target is too low (Alt: {alt:.1f}° <= {args.min_alt:.0f}°). Slewing aborted to protect mount.")
             sys.exit(1)
         if 170.0 <= az <= 190.0:
             obs_logger.error(f"FAIL: Target is crossing the meridian (Az: {az:.1f}°). Slewing aborted.")
