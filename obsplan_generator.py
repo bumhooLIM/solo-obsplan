@@ -14,7 +14,7 @@ def write_start_sequence(dusk_wait_ut):
     return [
         {'command': 'wait_until', 'ut': dusk_wait_ut},
         {'command': 'check_observatory'},
-        {'command': 'start_sequence', 'cooler_temp': -10.0}
+        {'command': 'start_sequence', 'cooler_temp': -5.0}
     ]
 
 def write_focus_auto(range_start, range_end, step, alt, az, exptime=5.0):

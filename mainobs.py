@@ -49,6 +49,9 @@ MERIDIAN_WAIT_MAX_MIN = 120        # Give up waiting for a field to clear the me
 MERIDIAN_WAIT_POLL_SEC = 60        # Re-check interval while waiting
 MERIDIAN_WAIT_HEARTBEAT_MIN = 10   # Status log interval while waiting
 
+# --- Roof Re-check Settings (see check_observatory) ---
+ROOF_RECHECK_MIN = 60              # Re-check a closed roof this often, until morning twilight
+
 def pointing_status(ra, dec, alt_limit=ALT_LIMIT_DEG):
     """Returns ('ok' | 'low' | 'meridian', alt, az) for a target at the current time."""
     alt, az = util.equatorial2horizon(ra, dec, latitude=OBS_LAT*u.deg, longitude=OBS_LON*u.deg, height=OBS_ELEV*u.m, t="now")
@@ -58,11 +61,32 @@ def pointing_status(ra, dec, alt_limit=ALT_LIMIT_DEG):
         return "meridian", alt, az
     return "ok", alt, az
 
-def sun_altitude_now():
-    """Returns the current altitude of the Sun in degrees."""
+def sun_altitude_now(dt_min=0):
+    """Returns the altitude of the Sun in degrees, now or dt_min minutes from now."""
     loc = EarthLocation(lat=OBS_LAT*u.deg, lon=OBS_LON*u.deg, height=OBS_ELEV*u.m)
-    now = Time.now()
-    return get_sun(now).transform_to(AltAz(obstime=now, location=loc)).alt.deg
+    t = Time.now() + dt_min * u.min
+    return get_sun(t).transform_to(AltAz(obstime=t, location=loc)).alt.deg
+
+def is_morning_twilight():
+    """True once the Sun is rising and above DAWN_SUN_ALT_DEG, i.e. the night is over."""
+    alt_now = sun_altitude_now()
+    return alt_now > DAWN_SUN_ALT_DEG and sun_altitude_now(dt_min=10) > alt_now
+
+def roof_is_open():
+    """Runs check_roof_status.py. True if the roof reports OPEN."""
+    return subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "check_roof_status.py")]).returncode == 0
+
+def wait_for_roof_open():
+    """
+    Returns True as soon as the roof reports OPEN. While it is closed (or the status file is unreadable),
+    re-checks every ROOF_RECHECK_MIN minutes, and returns False once morning twilight has started.
+    """
+    while not roof_is_open():
+        if is_morning_twilight():
+            return False
+        obs_logger.warning(f"Roof is CLOSED or its status is unreadable. Re-checking in {ROOF_RECHECK_MIN} min (until morning twilight)...")
+        sleep(ROOF_RECHECK_MIN * 60)
+    return True
 
 def observe_block(plan, start_idx):
     """
@@ -140,6 +164,7 @@ def execute_yaml_plan(yaml_file):
         obs_completed = 0 
         skip_remaining_targets = False
         meridian_wait_off_until = 0 # Plan index before which the meridian wait is disabled (after a timeout)
+        startup_done = False # True once start_sequence has powered up the hardware (see check_observatory)
 
         for step_num, step in enumerate(plan, 1):
             
@@ -153,14 +178,20 @@ def execute_yaml_plan(yaml_file):
             elif command == "check_observatory":
                 obs_logger.info("--> Verifying observatory readiness...")
                 
-                roof_proc = subprocess.run([sys.executable, str(directory.SCRIPT_DIR / "check_roof_status.py")])
-                if roof_proc.returncode != 0:
-                    # The ONLY time we stop the entire sequence is if the roof is closed.
-                    obs_logger.error("[FATAL ERROR] Roof is closed or network is down. Aborting entire night.")
+                # A closed roof no longer ends the night at once: re-check every ROOF_RECHECK_MIN until it opens.
+                # The night is aborted only if it is still closed when morning twilight starts.
+                if not wait_for_roof_open():
+                    obs_logger.error("[FATAL ERROR] Roof stayed closed (or network is down) until morning twilight. Aborting entire night.")
+                    break
+
+                # Before start-up, a roof that only opened after morning twilight began is too late to start the night
+                if not startup_done and is_morning_twilight():
+                    obs_logger.error("[FATAL ERROR] Roof opened only after morning twilight began. Too late to start the night. Aborting.")
                     break
 
             elif command == "start_sequence":
                 obs_logger.info("--> Executing pre-observation startup sequence...")
+                startup_done = True
 
                 # 1. Turn on Mount Power
                 subprocess.Popen([sys.executable, str(directory.SCRIPT_DIR / "power_switch.py"), "-s", "on"])
